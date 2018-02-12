@@ -43,7 +43,6 @@ class Main
 	}
 
 	public static void testCV(SupervisedLearner learner) {
-
 		Matrix f = new Matrix();
 		f.newColumns(1);
 		double[] f1 = {0};
@@ -64,8 +63,6 @@ class Main
 
 		double rmse = learner.cross_validation(1, 3, f, l);
 		System.out.println("RMSE: " + rmse);
-
-
 	}
 
 	public static void testOLS() {
@@ -122,6 +119,15 @@ class Main
 		System.out.println(ll.activation.toString());
 	}
 
+	public static void testBackProp() {
+		//double[] x = {0, 1, 2};
+		Vec test = new Vec(2);
+		double[] m = {1, 5, 1, 2, 3, 2, 1, 0};
+		LayerLinear ll = new LayerLinear(3, 2);
+		ll.backProp(new Vec(m), test);
+		System.out.println(test.toString());
+	}
+
 	public static void main(String[] args)
 	{
 		//testLearner(new BaselineLearner());
@@ -129,7 +135,8 @@ class Main
 		//testOLS();
 		//testLayer();
 		//test();
-		run(new NeuralNet());
+		//run(new NeuralNet());
+		testBackProp();
 		//testCV(new BaselineLearner());
 
 		//testLearner(new RandomForest(50));

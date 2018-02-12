@@ -12,9 +12,17 @@ abstract class Layer
 		this.outputs = outputs;
 	}
 
+	Vec getActivation() { return activation; }
+	Vec getBlame() { return blame; }
+
+	// Deep copy
+	void setBlame(Vec blame) {
+		this.blame = new Vec(blame);
+	}
+
 	abstract void activate(Vec weights, Vec x);
 
-	abstract void backprop(Vec weights, Vec prevBlame);
+	abstract void backProp(Vec weights, Vec prevBlame);
 
 	abstract void updateGradient(Vec x, Vec gradient);
 }

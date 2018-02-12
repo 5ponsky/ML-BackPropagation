@@ -912,6 +912,21 @@ public class Matrix
 	}
 */
 
+	static Matrix outer_product(Vec v, Vec w) {
+		if(v.size() != w.size())
+			throw new IllegalArgumentException("mismatching sizes");
+
+		Matrix res = new Matrix(v.size(), w.size());
+		for(int i = 0; i < v.size(); ++i) {
+			double[] newRow = new double[w.size()];
+			for(int j = 0; j < w.size(); ++j) {
+				newRow[i] = v.get(j) * w.get(j);
+			}
+			res.takeRow(newRow);
+		}
+		return res;
+	}
+
 	/// Multiplies two  matrices together
 	static Matrix multiply(Matrix a, Matrix b, boolean transposeA, boolean transposeB)
 	{

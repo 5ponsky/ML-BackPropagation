@@ -27,34 +27,71 @@ public class LayerLinear extends Layer {
 
   }
 
+  void backProp(Vec weights, Vec prevBlame) {
+    // Remove b from the weights
+    int totalEntries = weights.size();
+    int computedEntries = outputs;
+    int i = 0;
+
+    while(computedEntries < totalEntries && i < outputs) {
+      Vec temp = new Vec(weights, computedEntries, inputs);
+      System.out.println(temp.size());
+      System.out.println(prevBlame.size());
+      System.out.println(blame.size());
+      double newEntry = blame.dotProduct(temp);
+      prevBlame.set(i, newEntry);
+      computedEntries = computedEntries + inputs;
+      ++i;
+    }
+
+    // int mSize = (outputs * inputs);
+    // Vec m = new Vec(weights, outputs, mSize);
+    //
+    // int i = 0;
+    // int processedValues = 0;
+    // while(processedValues < mSize) {
+    //   Vec temp = new Vec(weights, i, inputs);
+    //   System.out.println(temp.toString());
+    //   prevBlame.set(i, temp.dotProduct(blame));
+    //   ++i;
+    //   processedValues = processedValues + (i * inputs);
+    // }
+    // System.out.println(prevBlame.toString());
+
+  }
+
+  void updateGradient(Vec x, Vec gradient) {
+    // Remove b
+    int bSize = outputs;
+    Vec b = new Vec(gradient, 0, outputs);
+
+    // Remove m
+    int mSize = (outputs * inputs);
+    Vec m = new Vec(gradient, outputs, mSize);
+
+    // add the blame to our bias
+    b.add(blame);
+
+    Matrix blameCrossX = Matrix.outer_product(blame, x);
+    int mIndex = 0;
+    for(int i = 0; i < blameCrossX.rows(); ++i) {
+      for(int j = 0; j < blameCrossX.cols(); ++j) {
+        m.set(mIndex, m.get(mIndex) + blameCrossX.row(i).get(j));
+      }
+    }
+
+  }
+
+
   void ordinary_least_squares(Matrix x, Matrix y, Vec weights) {
     /// x are features
     /// y are labels
-    System.out.println("y" + y.rows() + " " +y.cols());
-    System.out.println("x" + x.rows() + " " +x.cols());
 
     Matrix xCentroid = new Matrix();
     Matrix yCentroid = new Matrix();
     xCentroid.newColumns(x.cols());
     yCentroid.newColumns(y.cols());
 
-    //
-    // Subtract column averages from FEATURE matrix
-    // averagedXMatrix.newColumns(x.rows()); // Has 100 columns
-    // xCentroid.newColumns(x.cols()); // has 13 columns
-    // double[] tempXCentroidCol = new double[x.cols()]; // size = 13
-    // for(int i = 0; i < x.cols(); ++i) { // For each column in X, calculate the column avg
-    //   double xMean = x.columnMean(i);
-    //
-    //   double[] tempColumn = new double[x.rows()];
-    //   Arrays.fill(tempColumn, xMean);
-    //   tempXCentroidCol[i] = xMean;
-    //   averagedXMatrix.takeRow(tempColumn);
-    // }
-    // xCentroid.takeRow(tempXCentroidCol);
-    //
-    // averagedXMatrix = averagedXMatrix.transpose();
-    // x.addScaled(averagedXMatrix, -1.0);
     double[] xRow = new double[x.cols()];
     for(int i = 0; i < x.cols(); ++i) {
       double xMean = x.columnMean(i);
@@ -79,26 +116,18 @@ public class LayerLinear extends Layer {
 
     Matrix featuresCrossLabels = Matrix.multiply(y.transpose(), x, false, false); // heeeelp
 
-    System.out.println("fcl" + featuresCrossLabels.rows() + " " +featuresCrossLabels.cols());
     Matrix xTranspose = new Matrix(x.transpose());
     Matrix featuresCrossFeatures = Matrix.multiply(xTranspose, x, false, false);
     Matrix fcfInverse = featuresCrossFeatures.pseudoInverse();
-    System.out.println("fcf" + featuresCrossFeatures.rows() + " " +featuresCrossFeatures.cols());
-    System.out.println("fcfI" + fcfInverse.rows() + " " +fcfInverse.cols());
     Matrix weightsMatrix = Matrix.multiply(featuresCrossLabels, fcfInverse, false, false);
 
     //
     // Calculate bias
-    System.out.println("wm" + weightsMatrix.rows() + " " +weightsMatrix.cols());
-    System.out.println("x" + xCentroid.rows() + " " +xCentroid.cols());
     Matrix mx = Matrix.multiply(weightsMatrix, xCentroid.transpose(), false, false);
-    System.out.println("y" + yCentroid.rows() + " " +yCentroid.cols());
-    System.out.println("y" + mx.rows() + " " +mx.cols());
     yCentroid.addScaled(mx, -1);
 
     //
     // Push the bias Matrix (yCentroid) and weightsMatrix into one long vector
-    System.out.println("weights: " + weights.size());
     int weightsIndex = 0;
     for(int i = 0; i < yCentroid.rows(); ++i) {
       Vec temp = yCentroid.row(i);
@@ -116,6 +145,5 @@ public class LayerLinear extends Layer {
       }
     }
   }
-
 
 }

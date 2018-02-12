@@ -14,8 +14,35 @@ public class NeuralNet extends SupervisedLearner {
     return "Linear Regression";
   }
 
+  void addLayer(int inputs, int outputs) {
+    layers.add(new LayerLinear(inputs, outputs));
+  }
+
+  void backProp(Vec weights, Vec target) {
+    // Backpropagate
+
+    // Compute blame for output layer
+    Vec outputBlame = layers.get(layers.size() - 1).blame;
+    outputBlame.copy(target);
+    Vec nActvation = layers.get(layers.size() - 1).activation;
+    nActvation.scale(-1);
+    outputBlame.add(nActvation);
+
+    for(int i = layers.size() - 2; i >= 0; --i) {
+      layers.get(i).backProp(weights, outputBlame);
+    }
+  }
+
+  void updateGradient() {
+    for(int i = 0; i < layers.size(); ++i) {
+      layers.get(i).updateGradient();
+    }
+  }
+
   Vec predict(Vec in) {
-    layers.get(0).activate(weights, in);
+    for(int i = 0; i < layers.size(); ++i) {
+      layers.get(i).activate(weights, in);
+    }
 
     return new Vec(layers.get(0).activation);
   }
@@ -29,7 +56,7 @@ public class NeuralNet extends SupervisedLearner {
 
 
     for(int i = 0; i < layers.size(); ++i) {
-      layers.get(0).ordinary_least_squares(features, labels, weights);
+      layers.get(i).ordinary_least_squares(features, labels, weights);
     }
   }
 

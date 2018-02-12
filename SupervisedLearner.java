@@ -69,7 +69,6 @@ abstract class SupervisedLearner
 				sse = sse + sum_squared_error(testFeatures, testLabels);
 			}
 
-			System.out.println("SSE: " + sse);
 			mse = mse + (sse / featureData.rows());
 			sse = 0;
 
@@ -82,7 +81,6 @@ abstract class SupervisedLearner
 		}
 
 
-		System.out.println("MSE: " + mse);
 		rmse = Math.sqrt(mse/repititions);
 		return rmse;
 	}
@@ -91,13 +89,16 @@ abstract class SupervisedLearner
 		if(features.rows() != labels.rows())
 			throw new IllegalArgumentException("Mistmatching number of rows");
 
+		System.out.println("-------------");
 		double mis = 0;
 		for(int i = 0; i < features.rows(); i++) {
 			Vec feat = features.row(i);
 			Vec pred = predict(feat);
 			Vec lab = labels.row(i);
 			for(int j = 0; j < lab.size(); j++) {
-				mis = mis + (lab.get(j) - pred.get(j)) * (lab.get(j) - pred.get(j));
+				double blame = (lab.get(j) - pred.get(j)) * (lab.get(j) - pred.get(j));
+				System.out.println(i + " " + pred);
+				mis = mis + blame;
 			}
 		}
 
