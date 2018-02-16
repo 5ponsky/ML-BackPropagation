@@ -18,6 +18,13 @@ public class NeuralNet extends SupervisedLearner {
     layers.add(new LayerLinear(inputs, outputs));
   }
 
+  void activate() {
+    for(int i = 0; i < layers.size(); ++i) {
+      Layer l = layers.get(i);
+      Vec v = new Vec(weights, 0, 0);
+    }
+  }
+
   void backProp(Vec weights, Vec target) {
     // Backpropagate
 
@@ -45,6 +52,10 @@ public class NeuralNet extends SupervisedLearner {
     }
 
     return new Vec(layers.get(0).activation);
+  }
+
+  void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
+    
   }
 
   /// Train this supervised learner
