@@ -134,6 +134,12 @@ public class Vec {
 			vals[start + i] += that.get(i);
 	}
 
+	public void addEntry(int index, double value) {
+		if(start + index > len)
+			throw new IllegalArgumentException("index not in vector!");
+		vals[start + index] += value;
+	}
+
 	public void scale(double scalar) {
 		for(int i = 0; i < len; i++)
 			vals[start + i] *= scalar;

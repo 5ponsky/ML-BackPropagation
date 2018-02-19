@@ -52,23 +52,30 @@ public class LayerLinear extends Layer {
   }
 
   void updateGradient(Vec x, Vec gradient) {
+    System.out.println("LIN updateGradient");
+    System.out.println("input: " + x.toString());
+    System.out.println("blame: " + blame.toString());
+
     // Remove b
     Vec b = new Vec(gradient, 0, outputs);
 
-    // Remove m
-    int mSize = (outputs * inputs);
-    Vec m = new Vec(gradient, outputs, mSize);
-
     // add the blame to our bias
-    blame.add(b);
+    b.add(blame);
+    System.out.println("Computed bias grad: " + b.toString());
 
-    Matrix blameCrossX = Matrix.outer_product(blame, x);
-    int mIndex = 0;
-    for(int i = 0; i < blameCrossX.rows(); ++i) {
-      for(int j = 0; j < blameCrossX.cols(); ++j) {
-        m.set(mIndex, m.get(mIndex) + blameCrossX.row(i).get(j));
-      }
+    int pos = outputs;
+    for(int i = 0; i < outputs; ++i) { // Review outer_product for help
+      Vec temp = new Vec(blame, pos, outputs);
+      double newEntry = x.dotProduct(blame);
+      gradient.addEntry(pos, newEntry);
     }
+
+    // int mIndex = 0;
+    // for(int i = 0; i < blameCrossX.rows(); ++i) {
+    //   for(int j = 0; j < blameCrossX.cols(); ++j) {
+    //     m.set(mIndex, m.get(mIndex) + blameCrossX.row(i).get(j));
+    //   }
+    // }
 
   }
 

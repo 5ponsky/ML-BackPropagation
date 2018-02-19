@@ -174,10 +174,12 @@ class Main
 		Vec o = nn.predict(in);
 		System.out.println("Final pred (yhat): " + o.toString());
 
-		double[] t = {0.7}; 
+		double[] t = {0.7};
 		Vec target = new Vec(t);
 		nn.backProp(null, target);
 
+		System.out.println("------------------------------");
+		nn.updateGradient(in);
 	}
 
 	public static void main(String[] args)

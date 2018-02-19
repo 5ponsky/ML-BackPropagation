@@ -27,5 +27,10 @@ public class LayerTanh extends Layer {
     }
   }
 
-  void updateGradient(Vec x, Vec gradient) {} // Tanh contains no weights so this is empty
+  void updateGradient(Vec x, Vec gradient) {
+    System.out.println("TANH updateGradient");
+    System.out.println("input: " + x.toString());
+    System.out.println("blame: " + blame.toString() + "\n");
+    //System.out.println("computed weights gradient: " + m.toString() + "\n");
+  } // Tanh contains no weights so this is empty
 }

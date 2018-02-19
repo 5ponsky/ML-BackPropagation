@@ -4,6 +4,7 @@ import java.util.Random;
 
 public class NeuralNet extends SupervisedLearner {
   protected Vec weights;
+  protected Vec gradient;
   protected ArrayList<Layer> layers;
 
   String name() { return ""; }
@@ -29,22 +30,15 @@ public class NeuralNet extends SupervisedLearner {
       Layer l = layers.get(i);
       if(l.getNumberWeights() > 0) {
         for(int j = 0; j < l.getNumberWeights(); ++j) {
-          weights.set(pos, Math.max(0.03, (1.0 / l.inputs) * random.nextGaussian()));
+          weights.set(pos, Math.max(0.03, (1.0 / l.inputs)) * random.nextGaussian());
           ++pos;
         }
       }
     }
   }
 
-  void activate() {
-    for(int i = 0; i < layers.size(); ++i) {
-      Layer l = layers.get(i);
-      Vec v = new Vec(weights, 0, 0);
-    }
-  }
-
   // TODO: backprop strips the wrong set of weights
-  
+
   void backProp(Vec weights, Vec target) {
     weights = this.weights;
 
@@ -55,7 +49,7 @@ public class NeuralNet extends SupervisedLearner {
     System.out.println("Output layer blame: " + layers.get(layers.size()-1).blame);
 
 
-    int pos = weights.size() - 1;
+    int pos = weights.size();
     Vec prevBlame;
     for(int i = layers.size()-1; i > 0; --i) {
       Layer l = layers.get(i);
@@ -69,6 +63,9 @@ public class NeuralNet extends SupervisedLearner {
       pos -= weightsChunk;
       Vec w = new Vec(weights, pos, weightsChunk);
 
+      System.out.println("Segmented chunk of weights: " + w.toString());
+      System.out.println("Starts at: " + pos + " with length: " + weightsChunk);
+
       // Compute the blame for the preceding layer
       // preceding := closer to layers.get(0)
       l.backProp(w, prevBlame);
@@ -77,10 +74,35 @@ public class NeuralNet extends SupervisedLearner {
     }
   }
 
-  void updateGradient() {
-    for(int i = 0; i < layers.size(); ++i) {
-      //layers.get(i).updateGradient();
+
+  void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
+    backProp(weights, y);
+
+    for(int i = 0; i < weights.size(); ++i) {
+      //weights.set(i, learning_rate * )
     }
+  }
+
+  void updateGradient(Vec x) {
+    gradient = new Vec(weights.size());
+    gradient.fill(0.0);
+    // pass in correct chunks of weights,
+    // x: activation of the previous layer
+    // I believe we start at the INPUT LAYER
+    // and compute the gradient with the given input vector
+    int pos = 0;
+    for(int i = 0; i < layers.size(); ++i) {
+      Layer l = layers.get(i);
+      int gradChunk = l.getNumberWeights();
+      Vec v = new Vec(gradient, pos, gradChunk);
+
+      l.updateGradient(x, v);
+      x = l.activation;
+    }
+  }
+
+  void central_difference(Vec x) {
+
   }
 
   Vec predict(Vec in) {
@@ -96,10 +118,6 @@ public class NeuralNet extends SupervisedLearner {
     }
 
     return new Vec(layers.get(layers.size()-1).activation);
-  }
-
-  void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
-
   }
 
   /// Train this supervised learner
