@@ -13,15 +13,14 @@ public class LayerTanh extends Layer {
     for(int i = 0; i < outputs; ++i) {
       activation.set(i, Math.tanh(x.get(i)));
     }
+    System.out.println("Computed TANH activation: " + activation.toString());
   }
 
   void backProp(Vec weights, Vec prevBlame) {
-    System.out.println("tanH blame: " + outputs);
-    System.out.println("tanH act: " + activation.size());
-    System.out.println("tanh prevB: " + prevBlame.size());
     if(activation.size() != blame.size())
       throw new IllegalArgumentException("derivative problem, vector size mismatch");
 
+    System.out.println("Blame on TANH layer: " + blame.toString());
     for(int i = 0; i < outputs; ++i) {
       double derivative = blame.get(i) * (1.0 - (activation.get(i) * activation.get(i)));
       prevBlame.set(i, derivative);

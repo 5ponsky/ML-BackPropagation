@@ -9,19 +9,7 @@ public class NeuralNet extends SupervisedLearner {
   String name() { return ""; }
 
   NeuralNet() {
-
     layers = new ArrayList<Layer>();
-  }
-
-  // Initialize a NN with a weights vector
-  NeuralNet(int featureSize, int labelSize) {
-    layers = new ArrayList<Layer>();
-
-    /// For our project we know we will have 62800 weights (given by gashler)
-    // LL1: 62800
-    // LL2: 2430
-    // LL3: 310
-    //weights = new Vec(featureSize + (featureSize * labelSize));
   }
 
   void initWeights() {
@@ -43,13 +31,6 @@ public class NeuralNet extends SupervisedLearner {
         }
       }
     }
-
-    // for(int i = 0; i < layers.size(); ++i) {
-    //   Layer l = layers.get(i);
-    //   for(int j = 0; j < l.activation.size(); ++j) {
-    //     l.activation.set(j, Math.max(0.03, (1.0 / l.inputs) * random.nextGaussian()));
-    //   }
-    // }
   }
 
   void activate() {
@@ -62,28 +43,32 @@ public class NeuralNet extends SupervisedLearner {
   void backProp(Vec weights, Vec target) {
     weights = this.weights;
 
-    //Vec blame = layers.get(layers.size() - 1).blame;
+    // Blame for the outputs layer is computed as:
+    // blame = target - activation
     layers.get(layers.size() - 1).blame = target;
     layers.get(layers.size() - 1).blame.addScaled(-1, layers.get(layers.size()-1).activation);
-    //System.out.println(layers.get(layers.size()-1).blame);
+    System.out.println("Output layer blame: " + layers.get(layers.size()-1).blame);
+
 
     int pos = weights.size() - 1;
     Vec prevBlame;
     for(int i = layers.size()-1; i > 0; --i) {
       Layer l = layers.get(i);
-      //System.out.println(i + " " + l.blame + " " + l.blame.size());
+
+      // prevBlame := inputs of this layer (outputs of prevLayer)
       prevBlame = new Vec(l.inputs);
 
+      // Calculate the chunk of the weights vector
+      // That we need for backProp
       int weightsChunk = l.getNumberWeights();
       pos -= weightsChunk;
       Vec w = new Vec(weights, pos, weightsChunk);
-      System.out.println(i + ": " + weightsChunk);
 
+      // Compute the blame for the preceding layer
+      // preceding := closer to layers.get(0)
       l.backProp(w, prevBlame);
-      //System.out.println(prevBlame);
-      System.out.println("blame size: " + layers.get(i-1).blame.size());
       layers.get(i-1).blame = new Vec(prevBlame);
-      //System.out.println(i + " " + layers.get(layers.size() - (i + 1)).blame);
+      System.out.println("Computed blame on prev layer: " + prevBlame.toString());
     }
   }
 
@@ -97,8 +82,9 @@ public class NeuralNet extends SupervisedLearner {
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
       Layer l = layers.get(i);
-      int weightsChunk = (l.outputs + (l.inputs * l.outputs));
+      int weightsChunk = l.getNumberWeights();
       Vec v = new Vec(weights, pos, weightsChunk);
+      System.out.println("Weights: " + v.toString());
       l.activate(v, in);
       in = l.activation;
       pos += l.activation.size();

@@ -19,12 +19,11 @@ public class LayerLinear extends Layer {
       pos += inputs;
     }
     activation.add(b);
+    //
+    System.out.println("Computed LINEAR activation: " + activation.toString());
   }
 
   void backProp(Vec weights, Vec prevBlame) {
-    System.out.println("lin blame: " + blame.size());
-    System.out.println("lin act: " + activation.size());
-    System.out.println("lin prevB: " + prevBlame.size());
     int pos = outputs; // Ignore b
     Matrix mTranspose = new Matrix(inputs, outputs);
     for(int i = 0; i < outputs; ++i) {
@@ -41,7 +40,7 @@ public class LayerLinear extends Layer {
       double newEntry = v.dotProduct(blame);
       prevBlame.set(i, newEntry);
     }
-    //System.out.println(prevBlame);
+    System.out.println("Blame on LINEAR layer: " + blame.toString());
 
   }
 

@@ -139,7 +139,7 @@ class Main
 	}
 
 	public static void buildNet() {
-		NeuralNet nn = new NeuralNet(784, 10);
+		NeuralNet nn = new NeuralNet();
 		nn.layers.add(new LayerLinear(784, 80));
 		nn.layers.add(new LayerTanh(80));
 
@@ -159,12 +159,34 @@ class Main
 		//System.out.println("L1 blame size: " + o.toString());
 	}
 
+	public static void testNet() {
+		NeuralNet nn = new NeuralNet();
+		nn.layers.add(new LayerLinear(1, 2));
+		nn.layers.add(new LayerTanh(2));
+		nn.layers.add(new LayerLinear(2, 1));
+
+		double[] w = {0.1, 0.2, 0.3, 0.4, 0.1, 0.2, 0.3};
+		nn.weights = new Vec(w);
+
+		double[] x = {0.3};
+		Vec in = new Vec(x);
+
+		Vec o = nn.predict(in);
+		System.out.println("Final pred (yhat): " + o.toString());
+
+		double[] t = {0.7};
+		Vec target = new Vec(t);
+		nn.backProp(null, target);
+
+	}
+
 	public static void main(String[] args)
 	{
 		//run(new NeuralNet());
 		//testLayer();
 		//testBackProp();
-		buildNet();
+		//buildNet();
+		testNet();
 
 	}
 }
