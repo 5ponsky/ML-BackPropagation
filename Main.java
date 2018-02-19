@@ -174,7 +174,7 @@ class Main
 		Vec o = nn.predict(in);
 		System.out.println("Final pred (yhat): " + o.toString());
 
-		double[] t = {0.7};
+		double[] t = {0.7}; 
 		Vec target = new Vec(t);
 		nn.backProp(null, target);
 

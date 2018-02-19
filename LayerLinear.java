@@ -24,6 +24,7 @@ public class LayerLinear extends Layer {
   }
 
   void backProp(Vec weights, Vec prevBlame) {
+    System.out.println("LIN Backprop weights: " + weights.toString());
     int pos = outputs; // Ignore b
     Matrix mTranspose = new Matrix(inputs, outputs);
     for(int i = 0; i < outputs; ++i) {
@@ -35,9 +36,15 @@ public class LayerLinear extends Layer {
       pos += inputs;
     }
 
+    for(int i = 0; i < mTranspose.rows(); ++i) {
+      System.out.println("Row: " + i + " has: " + mTranspose.row(i));
+    }
+
     for(int i = 0; i < inputs; ++i) {
       Vec v = mTranspose.row(i);
+      System.out.println(v.toString() + " times " + blame);
       double newEntry = v.dotProduct(blame);
+      System.out.println(newEntry);
       prevBlame.set(i, newEntry);
     }
     System.out.println("Blame on LINEAR layer: " + blame.toString());

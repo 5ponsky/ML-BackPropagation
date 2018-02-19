@@ -14,6 +14,8 @@ public class NeuralNet extends SupervisedLearner {
 
   void initWeights() {
     Random random = new Random(1234);
+
+    // Calculate the total number of weights
     int weightsSize = 0;
     for(int i = 0; i < layers.size(); ++i) {
       Layer l = layers.get(i);
@@ -21,6 +23,7 @@ public class NeuralNet extends SupervisedLearner {
     }
     weights = new Vec(weightsSize);
 
+    // Randomize the values of the weights
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
       Layer l = layers.get(i);
@@ -40,6 +43,8 @@ public class NeuralNet extends SupervisedLearner {
     }
   }
 
+  // TODO: backprop strips the wrong set of weights
+  
   void backProp(Vec weights, Vec target) {
     weights = this.weights;
 
