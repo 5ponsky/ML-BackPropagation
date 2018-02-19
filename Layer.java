@@ -25,4 +25,6 @@ abstract class Layer
 	abstract void backProp(Vec weights, Vec prevBlame);
 
 	abstract void updateGradient(Vec x, Vec gradient);
+
+	abstract int getNumberWeights();
 }

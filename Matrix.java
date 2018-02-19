@@ -506,8 +506,14 @@ public class Matrix
 	public void takeRow(double[] row)
 	{
 		if(row.length != cols())
-			throw new IllegalArgumentException("Row size differs from the number of columns in this matrix.");
+			throw new IllegalArgumentException("Col size differs from the number of columns in this matrix.");
 		m_data.add(row);
+	}
+
+	public void takeRow(Vec row) {
+		if(row.size() != cols())
+			throw new IllegalArgumentException("Vector differs from columns size");
+		m_data.add(row.data());
 	}
 
 
@@ -984,7 +990,7 @@ public class Matrix
 			else
 			{
 				if(a.cols() != b.rows())
-					throw new IllegalArgumentException("No can do");
+					throw new IllegalArgumentException("A cols != B rows");
 				for(int i = 0; i < res.rows(); i++)
 				{
 					for(int j = 0; j < res.cols(); j++)

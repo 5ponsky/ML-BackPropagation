@@ -13,8 +13,13 @@ public class Vec {
 	protected int len;
 
 	public int size() { return len; }
+	public double[] data() { return vals; }
 	public double get(int index) { return vals[start + index]; }
-	public void set(int index, double value) { vals[start + index] = value; }
+	public void set(int index, double value) {
+		if(start + index > len)
+			throw new IllegalArgumentException("index not in vector!");
+		vals[start + index] = value;
+	}
 
 	/// Makes an vector of the specified size
 	public Vec(int size) {
@@ -43,6 +48,8 @@ public class Vec {
 
 	/// This is NOT a copy constructor. It wraps the same buffer of values as v.
 	public Vec(Vec v, int begin, int length) {
+		if(v.size() < begin + length)
+			throw new IllegalArgumentException("out of bounds!");
 		vals = v.vals;
 		start = v.start + begin;
 		len = length;
@@ -56,6 +63,12 @@ public class Vec {
 		start = 0;
 		len = n.size();
 	}
+
+	public double[] getData() {
+		return vals;
+	}
+
+
 
 	public Json marshal() {
 		Json list = Json.newList();

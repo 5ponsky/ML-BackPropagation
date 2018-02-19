@@ -3,66 +3,50 @@ import java.util.Arrays;
 
 public class LayerLinear extends Layer {
 
+  int getNumberWeights() { return (outputs + (inputs * outputs)); }
+
   LayerLinear(int inputs, int outputs) {
     super(inputs, outputs);
   }
 
   void activate(Vec weights, Vec x) {
-    int totalEntries = weights.size();
-    int computedEntries = 0;
-    int i = 0;
-
-    double[] data = new double[outputs];
     Vec b = new Vec(weights, 0, outputs);
-    computedEntries = computedEntries + outputs;
-
-    while(computedEntries < totalEntries && i < outputs) {
-      Vec temp = new Vec(weights, computedEntries, inputs);
+    int pos = outputs;
+    for(int i = 0; i < outputs; ++i) {
+      Vec temp = new Vec(weights, pos, inputs);
       double newEntry = x.dotProduct(temp);
       activation.set(i, newEntry);
-      computedEntries = computedEntries + inputs;
-      ++i;
+      pos += inputs;
     }
     activation.add(b);
-
   }
 
   void backProp(Vec weights, Vec prevBlame) {
-    // Remove b from the weights
-    int totalEntries = weights.size();
-    int computedEntries = outputs;
-    int i = 0;
-
-    while(computedEntries < totalEntries && i < outputs) {
-      Vec temp = new Vec(weights, computedEntries, inputs);
-      System.out.println(temp.size());
-      System.out.println(prevBlame.size());
-      System.out.println(blame.size());
-      double newEntry = blame.dotProduct(temp);
-      prevBlame.set(i, newEntry);
-      computedEntries = computedEntries + inputs;
-      ++i;
+    System.out.println("lin blame: " + blame.size());
+    System.out.println("lin act: " + activation.size());
+    System.out.println("lin prevB: " + prevBlame.size());
+    int pos = outputs; // Ignore b
+    Matrix mTranspose = new Matrix(inputs, outputs);
+    for(int i = 0; i < outputs; ++i) {
+      Vec v = new Vec(weights, pos, inputs);
+      for(int j = 0; j < inputs; ++j) {
+        Vec w = mTranspose.row(j);
+        w.set(i, v.get(j));
+      }
+      pos += inputs;
     }
 
-    // int mSize = (outputs * inputs);
-    // Vec m = new Vec(weights, outputs, mSize);
-    //
-    // int i = 0;
-    // int processedValues = 0;
-    // while(processedValues < mSize) {
-    //   Vec temp = new Vec(weights, i, inputs);
-    //   System.out.println(temp.toString());
-    //   prevBlame.set(i, temp.dotProduct(blame));
-    //   ++i;
-    //   processedValues = processedValues + (i * inputs);
-    // }
-    // System.out.println(prevBlame.toString());
+    for(int i = 0; i < inputs; ++i) {
+      Vec v = mTranspose.row(i);
+      double newEntry = v.dotProduct(blame);
+      prevBlame.set(i, newEntry);
+    }
+    //System.out.println(prevBlame);
 
   }
 
   void updateGradient(Vec x, Vec gradient) {
     // Remove b
-    int bSize = outputs;
     Vec b = new Vec(gradient, 0, outputs);
 
     // Remove m
@@ -70,7 +54,7 @@ public class LayerLinear extends Layer {
     Vec m = new Vec(gradient, outputs, mSize);
 
     // add the blame to our bias
-    b.add(blame);
+    blame.add(b);
 
     Matrix blameCrossX = Matrix.outer_product(blame, x);
     int mIndex = 0;
