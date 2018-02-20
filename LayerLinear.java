@@ -20,6 +20,10 @@ public class LayerLinear extends Layer {
     }
     activation.add(b);
     //
+    System.out.println("------------------------------------------");
+    System.out.println("LIN activate");
+    System.out.println("input: " + x.toString());
+    System.out.println("weights: " + weights.toString());
     System.out.println("Computed LINEAR activation: " + activation.toString());
   }
 
@@ -55,21 +59,34 @@ public class LayerLinear extends Layer {
     System.out.println("LIN updateGradient");
     System.out.println("input: " + x.toString());
     System.out.println("blame: " + blame.toString());
+    System.out.println("gradient: " + gradient.toString());
 
     // Remove b
     Vec b = new Vec(gradient, 0, outputs);
+    System.out.println("b: " + b.toString());
 
     // add the blame to our bias
     b.add(blame);
-    System.out.println("Computed bias grad: " + b.toString());
+
 
     int pos = outputs;
-    for(int i = 0; i < outputs; ++i) { // Review outer_product for help
-      Vec temp = new Vec(blame, pos, outputs);
-      double newEntry = x.dotProduct(blame);
-      gradient.addEntry(pos, newEntry);
+    for(int i = 0; i < x.size(); ++i) { // Review outer_product for help
+      double x_i = x.get(i);
+      Vec temp = new Vec(gradient, pos, outputs);
+      // System.out.println("grad: " + gradient.size());
+      // System.out.println("x: " + x.size());
+      // System.out.println("temp: " + temp.size());
+      // System.out.println("blame: " + blame.size());
+      // System.out.println("--------");
+      // System.out.println(x_i + " * " + blame);
+      temp.addScaled(x_i, blame);
+      //double newEntry = x.dotProduct(blame);
+      //gradient.addEntry(pos, newEntry);
+      pos += outputs;
     }
 
+    System.out.println("Computed weights gradient: " + gradient.toString());
+    System.out.println("Computed bias grad: " + b.toString());
     // int mIndex = 0;
     // for(int i = 0; i < blameCrossX.rows(); ++i) {
     //   for(int j = 0; j < blameCrossX.cols(); ++j) {

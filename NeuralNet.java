@@ -23,6 +23,8 @@ public class NeuralNet extends SupervisedLearner {
       weightsSize += l.getNumberWeights();
     }
     weights = new Vec(weightsSize);
+    gradient = new Vec(weightsSize);
+    gradient.fill(0.0);
 
     // Randomize the values of the weights
     int pos = 0;
@@ -74,22 +76,8 @@ public class NeuralNet extends SupervisedLearner {
     }
   }
 
-
-  void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
-    backProp(weights, y);
-
-    for(int i = 0; i < weights.size(); ++i) {
-      //weights.set(i, learning_rate * )
-    }
-  }
-
   void updateGradient(Vec x) {
     gradient = new Vec(weights.size());
-    gradient.fill(0.0);
-    // pass in correct chunks of weights,
-    // x: activation of the previous layer
-    // I believe we start at the INPUT LAYER
-    // and compute the gradient with the given input vector
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
       Layer l = layers.get(i);
@@ -97,8 +85,26 @@ public class NeuralNet extends SupervisedLearner {
       Vec v = new Vec(gradient, pos, gradChunk);
 
       l.updateGradient(x, v);
-      x = l.activation;
+      x = l.activation; // I think the problem with update gradient is here
+      // I'm not calling activate each epoch to compute a different
+      // distance from the preferred value?
+      // I need to work in activate into my epoch somehow
+      pos += gradChunk;
     }
+  }
+
+  void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
+    weights = this.weights;
+
+    // Compute the blame on each layer
+    backProp(weights, y);
+
+    // Compute the gradient
+    updateGradient(x);
+
+    // Adjust the weights per the learning_rate
+    weights.addScaled(learning_rate, gradient);
+    System.out.println("weights: " + weights.toString());
   }
 
   void central_difference(Vec x) {
@@ -117,6 +123,7 @@ public class NeuralNet extends SupervisedLearner {
       pos += l.activation.size();
     }
 
+    System.out.println("FINAL LAYER ACTIVATION: " + layers.get(layers.size()-1).activation);
     return new Vec(layers.get(layers.size()-1).activation);
   }
 

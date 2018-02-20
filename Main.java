@@ -168,18 +168,24 @@ class Main
 		double[] w = {0.1, 0.2, 0.3, 0.4, 0.1, 0.2, 0.3};
 		nn.weights = new Vec(w);
 
+		nn.gradient = new Vec(nn.weights.size());
+		nn.gradient.fill(0.0);
+
 		double[] x = {0.3};
 		Vec in = new Vec(x);
 
-		Vec o = nn.predict(in);
-		System.out.println("Final pred (yhat): " + o.toString());
+		//Vec o = nn.predict(in);
+		//System.out.println("Final pred (yhat): " + o.toString());
 
 		double[] t = {0.7};
 		Vec target = new Vec(t);
-		nn.backProp(null, target);
+		for(int i = 0; i < 3; ++i) {
+			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+			System.out.println("EPOCH: " + i);
+			Vec o = nn.predict(in);
+			nn.refineWeights(in, target, null, 0.1);
+		}
 
-		System.out.println("------------------------------");
-		nn.updateGradient(in);
 	}
 
 	public static void main(String[] args)

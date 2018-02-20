@@ -13,6 +13,10 @@ public class LayerTanh extends Layer {
     for(int i = 0; i < outputs; ++i) {
       activation.set(i, Math.tanh(x.get(i)));
     }
+    System.out.println("------------------------------------------");
+    System.out.println("TANH activate");
+    System.out.println("input: " + x.toString());
+    System.out.println("weights: " + weights.toString());
     System.out.println("Computed TANH activation: " + activation.toString());
   }
 
