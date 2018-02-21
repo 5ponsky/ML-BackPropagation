@@ -113,7 +113,18 @@ abstract class SupervisedLearner
 		for(int i = 0; i < features.rows(); i++) {
 			Vec feat = features.row(i);
 			Vec pred = predict(feat);
-			Vec lab = labels.row(i);
+
+			//System.out.println("------------------------");
+			//System.out.println("pred: " + pred.toString());
+			// Force into one-hot
+			System.out.println("------------");
+			System.out.println(pred.toString());
+			pred.oneHot();
+			//System.out.println("1-hot: " + pred.toString());
+
+			Vec lab = formatLabel((int)labels.row(i).get(0));
+			//System.out.println("lab: " + lab.toString());
+			//System.out.println(i + " " + lab.toString());
 			for(int j = 0; j < lab.size(); j++) {
 				if(pred.get(j) != lab.get(j))
 					mis++;
@@ -121,4 +132,14 @@ abstract class SupervisedLearner
 		}
 		return mis;
 	}
+
+	Vec formatLabel(int label) {
+		if(label > 9 || label < 0)
+			throw new IllegalArgumentException("not a valid labels!");
+
+		double[] res = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		res[label] = 1;
+		return new Vec(res);
+	}
+
 }

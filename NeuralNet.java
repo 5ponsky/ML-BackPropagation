@@ -23,8 +23,8 @@ public class NeuralNet extends SupervisedLearner {
       weightsSize += l.getNumberWeights();
     }
     weights = new Vec(weightsSize);
-    gradient = new Vec(weightsSize);
-    gradient.fill(0.0);
+    //gradient = new Vec(weightsSize);
+    //gradient.fill(0.0);
 
     // Randomize the values of the weights
     int pos = 0;
@@ -46,11 +46,10 @@ public class NeuralNet extends SupervisedLearner {
 
     // Blame for the outputs layer is computed as:
     // blame = target - activation
-    
+
     // ERROR ON OUTPUT LAYER BLAME ON EPOCH #2!!!!!!!
-    layers.get(layers.size() - 1).blame = target;
+    layers.get(layers.size() - 1).blame = new Vec(target);
     layers.get(layers.size() - 1).blame.addScaled(-1, layers.get(layers.size()-1).activation);
-    System.out.println("Output layer blame: " + layers.get(layers.size()-1).blame);
 
 
     int pos = weights.size();
@@ -67,13 +66,10 @@ public class NeuralNet extends SupervisedLearner {
       pos -= weightsChunk;
       Vec w = new Vec(weights, pos, weightsChunk);
 
-      System.out.println("Segmented chunk of weights: " + w.toString());
-
       // Compute the blame for the preceding layer
       // preceding := closer to layers.get(0)
       l.backProp(w, prevBlame);
       layers.get(i-1).blame = new Vec(prevBlame);
-      System.out.println("Computed blame on prev layer: " + prevBlame.toString());
     }
   }
 
@@ -105,7 +101,7 @@ public class NeuralNet extends SupervisedLearner {
 
     // Adjust the weights per the learning_rate
     weights.addScaled(learning_rate, gradient);
-    System.out.println("weights: " + weights.toString());
+    System.out.println(weights.toString());
   }
 
   void central_difference(Vec x) {
@@ -118,14 +114,11 @@ public class NeuralNet extends SupervisedLearner {
       Layer l = layers.get(i);
       int weightsChunk = l.getNumberWeights();
       Vec v = new Vec(weights, pos, weightsChunk);
-      System.out.println("Weights: " + v.toString());
       l.activate(v, in);
       in = l.activation;
       pos += l.activation.size();
     }
 
-    System.out.println("FINAL LAYER ACTIVATION: " + layers.get(layers.size()-1).activation);
-    System.out.println("-----------------------------------------");
     return new Vec(layers.get(layers.size()-1).activation);
   }
 
@@ -141,5 +134,7 @@ public class NeuralNet extends SupervisedLearner {
       //layers.get(i).ordinary_least_squares(features, labels, weights);
     }
   }
+
+
 
 }

@@ -145,6 +145,26 @@ public class Vec {
 			vals[start + i] *= scalar;
 	}
 
+	/// Makes the highest value in the vector a 1, and all others 0
+	public void oneHot() {
+		double max = this.get(0);
+		int maxIndex = 0;
+
+		// Obtain the maximum value
+		for(int i = 0; i < this.size(); ++i) {
+			if(this.get(i) > max) {
+				max = this.get(i);
+				maxIndex = i;
+			}
+		}
+
+		for(int i = 0; i < this.size(); ++i) {
+			if(i != maxIndex)
+				this.set(i, 0.0);
+		}
+		this.set(maxIndex, 1.0);
+	}
+
 	public void addScaled(double scalar, Vec that) {
 		if(that.size() != this.size())
 			throw new IllegalArgumentException("mismatching sizes");

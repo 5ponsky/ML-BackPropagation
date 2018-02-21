@@ -93,7 +93,6 @@ class Main
 			}
 		}
 
-
 		for(int i = 0; i < weights.size(); ++i) {
     	System.out.println(weights.get(i));
 		}
@@ -106,8 +105,6 @@ class Main
 		for(int i = 0; i < olsWeights.size(); ++i) {
 			System.out.println(olsWeights.get(i));
 		}
-
-
 	}
 
 
@@ -130,34 +127,26 @@ class Main
 		System.out.println(ll.blame.toString());
 	}
 
-
-	public static Vec testExample() {
-		double[] f = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,18,18,18,126,136,175,26,166,255,247,127,0,0,0,0,0,0,0,0,0,0,0,0,30,36,94,154,170,253,253,253,253,253,225,172,253,242,195,64,0,0,0,0,0,0,0,0,0,0,0,49,238,253,253,253,253,253,253,253,253,251,93,82,82,56,39,0,0,0,0,0,0,0,0,0,0,0,0,18,219,253,253,253,253,253,198,182,247,241,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,80,156,107,253,253,205,11,0,43,154,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,1,154,253,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,139,253,190,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11,190,253,70,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,35,241,225,160,108,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,81,240,253,253,119,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,45,186,253,253,150,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,93,252,253,187,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,249,253,249,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,46,130,183,253,253,207,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,39,148,229,253,253,253,250,182,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24,114,221,253,253,253,253,201,78,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23,66,213,253,253,253,253,198,81,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,171,219,253,253,253,253,195,80,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,55,172,226,253,253,253,253,244,133,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,136,253,253,253,212,135,132,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-		double[] l = {5};
-
-		return new Vec(f);
-	}
-
-	public static void buildNet() {
-		NeuralNet nn = new NeuralNet();
-		nn.layers.add(new LayerLinear(784, 80));
-		nn.layers.add(new LayerTanh(80));
-
-		nn.layers.add(new LayerLinear(80, 30));
-		nn.layers.add(new LayerTanh(30));
-
-		nn.layers.add(new LayerLinear(30, 10));
-		nn.layers.add(new LayerTanh(10));
-
-		nn.initWeights();
-		Vec o = nn.predict(testExample());
-		System.out.println("prediction: " + o.toString());
-
-		double[] t = {0, 0, 0, 0, 0, 1, 0, 0, 0, 0};
-		Vec target = new Vec(t);
-		nn.backProp(null, target);
-		//System.out.println("L1 blame size: " + o.toString());
-	}
+	// public static void buildNet() {
+	// 	NeuralNet nn = new NeuralNet();
+	// 	nn.layers.add(new LayerLinear(784, 80));
+	// 	nn.layers.add(new LayerTanh(80));
+	//
+	// 	nn.layers.add(new LayerLinear(80, 30));
+	// 	nn.layers.add(new LayerTanh(30));
+	//
+	// 	nn.layers.add(new LayerLinear(30, 10));
+	// 	nn.layers.add(new LayerTanh(10));
+	//
+	// 	nn.initWeights();
+	// 	Vec o = nn.predict();
+	// 	System.out.println("prediction: " + o.toString());
+	//
+	// 	double[] t = {0, 0, 0, 0, 0, 1, 0, 0, 0, 0};
+	// 	Vec target = new Vec(t);
+	// 	nn.backProp(null, target);
+	// 	//System.out.println("L1 blame size: " + o.toString());
+	// }
 
 	public static void testNet() {
 		NeuralNet nn = new NeuralNet();
@@ -174,9 +163,6 @@ class Main
 		double[] x = {0.3};
 		Vec in = new Vec(x);
 
-		//Vec o = nn.predict(in);
-		//System.out.println("Final pred (yhat): " + o.toString());
-
 		double[] t = {0.7};
 		Vec target = new Vec(t);
 		for(int i = 0; i < 3; ++i) {
@@ -188,20 +174,183 @@ class Main
 
 	}
 
-	public static void testRefineWeighs() {
-		NeuralNet nn = new NeuralNet();
-		NeuralNet nn1 = new NeuralNet();
 
-		
+
+	public static void opticalCharacterRecognition() {
+		Random random = new Random(1234); // used for shuffling data
+
+
+		/// Load training and testing data
+		Matrix trainFeatures = new Matrix();
+		trainFeatures.loadARFF("data/train_feat.arff");
+		Matrix trainLabels = new Matrix();
+		trainLabels.loadARFF("data/train_lab.arff");
+
+		Matrix testFeatures = new Matrix();
+		testFeatures.loadARFF("data/test_feat.arff");
+		Matrix testLabels = new Matrix();
+		testLabels.loadARFF("data/test_lab.arff");
+
+		/// Normalize our training/testing data by dividing by 256.0
+		/// There are 256 possible values for any given entry
+		trainFeatures.scale((1 / 256.0));
+		testFeatures.scale((1 / 256.0));
+
+		/// Build index arrays to shuffle training and testing data
+		int[] trainingIndices = new int[trainFeatures.rows()];
+		int[] testIndices = new int[testFeatures.rows()];
+
+		// populate the index arrays with indices
+		for(int i = 0; i < trainingIndices.length; ++i) { trainingIndices[i] = i; }
+		for(int i = 0; i < testIndices.length; ++i) { testIndices[i] = i; }
+
+		/// Assemble and initialize a neural net
+		NeuralNet nn = new NeuralNet();
+
+		nn.layers.add(new LayerLinear(784, 80));
+		nn.layers.add(new LayerTanh(80));
+
+		nn.layers.add(new LayerLinear(80, 30));
+		nn.layers.add(new LayerTanh(30));
+
+		nn.layers.add(new LayerLinear(30, 10));
+		nn.layers.add(new LayerTanh(10));
+
+		nn.initWeights();
+
+		/// Training and testing
+		int mis = 10000;
+		int epoch = 0;
+		while(mis > 350) {
+			System.out.println("==============================");
+			System.out.println("TRAINING EPOCH #" + epoch + '\n');
+
+			int break_for_testing = 0;
+			for(int i = 0; i < trainFeatures.rows(); ++i) {
+
+				// Train the network on a single input
+				Vec in = new Vec(trainFeatures.row(trainingIndices[i]));
+				Vec x = nn.predict(in);
+
+				double label = trainLabels.row(trainingIndices[i]).get(0);
+				Vec target = new Vec(nn.formatLabel((int)label));
+				//System.out.println(target.toString());
+				nn.refineWeights(in, target, null, 0.003);
+
+				// Take a break every to often to test
+				if(break_for_testing > 5000) {
+					mis = nn.countMisclassifications(testFeatures, testLabels);
+					System.out.println("Misclassifications: " + mis);
+					break_for_testing = 0;
+
+					if(mis < 350) // if misclassifications drop below 350 we're done
+						break;
+				}
+
+				++break_for_testing;
+			}
+
+			/// Shuffle training and testing indices
+			for(int i = 0; i < trainingIndices.length; ++i) {
+				int randomIndex = random.nextInt(trainingIndices.length);
+				int temp = trainingIndices[i];
+				trainingIndices[i] = trainingIndices[randomIndex];
+				trainingIndices[randomIndex] = temp;
+
+			}
+
+			for(int i = 0; i < testIndices.length; ++i) {
+				int randomIndex = random.nextInt(testIndices.length);
+				int temp = testIndices[i];
+				testIndices[i] = testIndices[randomIndex];
+				testIndices[randomIndex] = temp;
+			}
+
+			++epoch;
+		}
+
+		/// Test on the fully trained net
+		// System.out.println("now testing on fully trained set")
+		// for(int i = 0; i < testFeatures.rows(); ++i) {
+		//
+		// }
 	}
+
+	public static void testChunks() {
+		Random random = new Random(1234); // used for shuffling data
+
+
+		/// Load training and testing data
+		Matrix trainFeatures = new Matrix();
+		trainFeatures.loadARFF("data/train_feat.arff");
+		Matrix trainLabels = new Matrix();
+		trainLabels.loadARFF("data/train_lab.arff");
+
+		Matrix testFeatures = new Matrix();
+		testFeatures.loadARFF("data/test_feat.arff");
+		Matrix testLabels = new Matrix();
+		testLabels.loadARFF("data/test_lab.arff");
+
+		/// Normalize our training/testing data by dividing by 256.0
+		/// There are 256 possible values for any given entry
+		trainFeatures.scale((1 / 256.0));
+		testFeatures.scale((1 / 256.0));
+
+		/// Build index arrays to shuffle training and testing data
+		int[] trainingIndices = new int[trainFeatures.rows()];
+		int[] testIndices = new int[testFeatures.rows()];
+
+		// populate the index arrays with indices
+		for(int i = 0; i < trainingIndices.length; ++i) { trainingIndices[i] = i; }
+		for(int i = 0; i < testIndices.length; ++i) { testIndices[i] = i; }
+
+		/// Assemble and initialize a neural net
+		NeuralNet nn = new NeuralNet();
+
+		nn.layers.add(new LayerLinear(784, 80));
+		nn.layers.add(new LayerTanh(80));
+
+		nn.layers.add(new LayerLinear(80, 30));
+		nn.layers.add(new LayerTanh(30));
+
+		nn.layers.add(new LayerLinear(30, 10));
+		nn.layers.add(new LayerTanh(10));
+
+		nn.initWeights();
+
+		/// Training and testing
+		int mis = 10000;
+		int epoch = 0;
+		System.out.println("==============================");
+		System.out.println("TRAINING EPOCH #" + epoch + '\n');
+
+		int break_for_testing = 0;
+		for(int i = 0; i < trainFeatures.rows(); ++i) {
+
+			// Train the network on a single input
+			Vec in = new Vec(trainFeatures.row(trainingIndices[i]));
+			double label = trainLabels.row(trainingIndices[i]).get(0);
+			Vec target = new Vec(nn.formatLabel((int)label));
+			//System.out.println(target.toString());
+
+			/// This method dives the training
+			nn.refineWeights(in, target, null, 0.003);
+
+			// Take a break every to often to test
+
+		}
+
+		mis = nn.countMisclassifications(testFeatures, testLabels);
+		System.out.println("Misclassifications: " + mis);
+	}
+
 
 	public static void main(String[] args)
 	{
+		testChunks();
 		//run(new NeuralNet());
-		//testLayer();
-		//testBackProp();
-		//buildNet();
-		testNet();
+		//opticalCharacterRecognition();
+		//testNet();
 
 	}
 }
