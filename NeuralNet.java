@@ -46,6 +46,8 @@ public class NeuralNet extends SupervisedLearner {
 
     // Blame for the outputs layer is computed as:
     // blame = target - activation
+    
+    // ERROR ON OUTPUT LAYER BLAME ON EPOCH #2!!!!!!!
     layers.get(layers.size() - 1).blame = target;
     layers.get(layers.size() - 1).blame.addScaled(-1, layers.get(layers.size()-1).activation);
     System.out.println("Output layer blame: " + layers.get(layers.size()-1).blame);
@@ -66,7 +68,6 @@ public class NeuralNet extends SupervisedLearner {
       Vec w = new Vec(weights, pos, weightsChunk);
 
       System.out.println("Segmented chunk of weights: " + w.toString());
-      System.out.println("Starts at: " + pos + " with length: " + weightsChunk);
 
       // Compute the blame for the preceding layer
       // preceding := closer to layers.get(0)
@@ -124,6 +125,7 @@ public class NeuralNet extends SupervisedLearner {
     }
 
     System.out.println("FINAL LAYER ACTIVATION: " + layers.get(layers.size()-1).activation);
+    System.out.println("-----------------------------------------");
     return new Vec(layers.get(layers.size()-1).activation);
   }
 

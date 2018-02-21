@@ -188,6 +188,13 @@ class Main
 
 	}
 
+	public static void testRefineWeighs() {
+		NeuralNet nn = new NeuralNet();
+		NeuralNet nn1 = new NeuralNet();
+
+		
+	}
+
 	public static void main(String[] args)
 	{
 		//run(new NeuralNet());

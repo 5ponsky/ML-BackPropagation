@@ -40,10 +40,6 @@ public class LayerLinear extends Layer {
       pos += inputs;
     }
 
-    for(int i = 0; i < mTranspose.rows(); ++i) {
-      System.out.println("Row: " + i + " has: " + mTranspose.row(i));
-    }
-
     for(int i = 0; i < inputs; ++i) {
       Vec v = mTranspose.row(i);
       System.out.println(v.toString() + " times " + blame);
@@ -51,7 +47,7 @@ public class LayerLinear extends Layer {
       System.out.println(newEntry);
       prevBlame.set(i, newEntry);
     }
-    System.out.println("Blame on LINEAR layer: " + blame.toString());
+    System.out.println("Blame on this LINEAR layer: " + blame.toString());
 
   }
 
