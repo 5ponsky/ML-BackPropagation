@@ -224,8 +224,6 @@ class Main
 				// 	if(mis < 350) // if misclassifications drop below 350 we're done
 				// 		break;
 				// }
-
-				//++break_for_testing;
 			}
 
 
@@ -289,7 +287,7 @@ class Main
 			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 			System.out.println("EPOCH: " + i);
 			Vec o = nn.predict(in);
-			nn.refineWeights(in, target, null, 0.1);
+			nn.refineWeights(in, target, null, 0.003);
 		}
 
 	}
@@ -299,8 +297,8 @@ class Main
 		//testSomething();
 		//testChunks();
 		//run(new NeuralNet());
-		//opticalCharacterRecognition();
-		testNet();
+		opticalCharacterRecognition();
+		//testNet();
 		//testNet1();
 
 	}
