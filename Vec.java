@@ -276,7 +276,7 @@ class Tensor extends Vec {
 			for(int i = 0; i < dc; i++)
 			{
 				int padding = (stride * (out.dims[i] - 1) + filter.dims[i] - in.dims[i]) / 2;
-				int adj = (padding - Math.min(padding, (int)kouter[i])) - kinner[i];
+				int adj = (padding - Math.min(padding, kouter[i])) - kinner[i];
 				kinner[i] += adj;
 				fp += adj * stepFilter[i];
 				ip += adj * stepInner[i];
@@ -294,7 +294,7 @@ class Tensor extends Vec {
 					int padding = (stride * (out.dims[i] - 1) + filter.dims[i] - in.dims[i]) / 2;
 					if(kinner[i] < filter.dims[i] && kouter[i] + kinner[i] - padding < in.dims[i])
 						break;
-					int adj = (padding - Math.min(padding, (int)kouter[i])) - kinner[i];
+					int adj = (padding - Math.min(padding, kouter[i])) - kinner[i];
 					kinner[i] += adj;
 					fp += adj * stepFilter[i];
 					ip += adj * stepInner[i];
