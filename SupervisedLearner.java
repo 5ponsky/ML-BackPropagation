@@ -117,18 +117,17 @@ abstract class SupervisedLearner
 			//System.out.println("------------------------");
 			//System.out.println("pred: " + pred.toString());
 			// Force into one-hot
-			System.out.println("------------");
-			System.out.println(pred.toString());
-			pred.oneHot();
+			//System.out.println("------------");
+			//System.out.println(pred.toString());
+			//pred.oneHot();
 			//System.out.println("1-hot: " + pred.toString());
 
 			Vec lab = formatLabel((int)labels.row(i).get(0));
-			//System.out.println("lab: " + lab.toString());
-			//System.out.println(i + " " + lab.toString());
-			for(int j = 0; j < lab.size(); j++) {
-				if(pred.get(j) != lab.get(j))
-					mis++;
-			}
+			System.out.println("----------------");
+			System.out.println("lab: " + lab.toString());
+			System.out.println(i + " " + pred.toString());
+			if(poorClassification(pred, lab))
+				mis++;
 		}
 		return mis;
 	}
@@ -140,6 +139,25 @@ abstract class SupervisedLearner
 		double[] res = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		res[label] = 1;
 		return new Vec(res);
+	}
+
+	boolean poorClassification(Vec pred, Vec lab) {
+		if(pred.size() != lab.size())
+			throw new IllegalArgumentException("vector size mismatch!");
+
+		double tolerance = 0.4;
+		double sse = 0;
+		// for(int i = 0; i < pred.size(); ++i) {
+		// 	sse = (pred.get(i) - lab.get(i)) * (pred.get(i) - lab.get(i));
+		// 	if(sse > tolerance)
+		// 		return true;
+		// }
+		pred.oneHot();
+		for(int i = 0; i < pred.size(); ++i) {
+			if(pred.get(i) != lab.get(i))
+				return true;
+		}
+		return false;
 	}
 
 }

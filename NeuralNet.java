@@ -75,6 +75,8 @@ public class NeuralNet extends SupervisedLearner {
 
   void updateGradient(Vec x) {
     gradient = new Vec(weights.size());
+    gradient.fill(0.0);
+
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
       Layer l = layers.get(i);
@@ -101,7 +103,9 @@ public class NeuralNet extends SupervisedLearner {
 
     // Adjust the weights per the learning_rate
     weights.addScaled(learning_rate, gradient);
-    System.out.println(weights.toString());
+
+
+    //System.out.println(weights.toString());
   }
 
   void central_difference(Vec x) {
