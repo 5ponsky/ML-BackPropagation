@@ -47,7 +47,7 @@ public class NeuralNet extends SupervisedLearner {
     // ERROR ON OUTPUT LAYER BLAME ON EPOCH #2!!!!!!!
     layers.get(layers.size() - 1).blame = new Vec(target);
     layers.get(layers.size() - 1).blame.addScaled(-1, layers.get(layers.size()-1).activation);
-
+    //System.out.println("output blame: " + layers.get(layers.size() - 1).blame);
 
     int pos = weights.size();
     Vec prevBlame;
@@ -92,6 +92,9 @@ public class NeuralNet extends SupervisedLearner {
   void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
     weights = this.weights;
 
+    // compute the activation
+    predict(x);
+
     // Compute the blame on each layer
     backProp(weights, y);
 
@@ -99,14 +102,16 @@ public class NeuralNet extends SupervisedLearner {
     updateGradient(x);
 
     // Adjust the weights per the learning_rate
-    weights.addScaled(learning_rate, gradient);
+    //System.out.println("before weights: " + weights);
+    this.weights.addScaled(learning_rate, gradient);
+    //System.out.println("after weights: " + weights);
     //System.out.println(layers.get(layers.size()-1).activation);
     //System.out.println(y);
 
     //System.out.println(weights.toString());
   }
 
-  void central_difference(Vec x) {
+  void central_difference(Vec x, double step_size) {
 
   }
 

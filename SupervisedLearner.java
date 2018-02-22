@@ -123,9 +123,9 @@ abstract class SupervisedLearner
 			//System.out.println("1-hot: " + pred.toString());
 
 			Vec lab = formatLabel((int)labels.row(i).get(0));
-			System.out.println("----------------");
-			System.out.println("lab: " + lab.toString());
-			System.out.println(i + " " + pred.toString());
+			//System.out.println("----------------");
+			//System.out.println("lab: " + lab.toString());
+			//System.out.println(i + " " + pred.toString());
 			if(poorClassification(pred, lab))
 				mis++;
 		}

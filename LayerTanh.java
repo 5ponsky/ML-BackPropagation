@@ -9,6 +9,7 @@ public class LayerTanh extends Layer {
     super(outputs, outputs);
   }
 
+  // NOTE: this layer has no weights, so the weights vector is unused
   void activate(Vec weights, Vec x) {
     for(int i = 0; i < outputs; ++i) {
       activation.set(i, Math.tanh(x.get(i)));
@@ -20,11 +21,12 @@ public class LayerTanh extends Layer {
     // System.out.println("Computed TANH activation: " + activation.toString());
   }
 
+  // NOTE: this layer contains no weights, so the weights parameter is unused
   void backProp(Vec weights, Vec prevBlame) {
     if(activation.size() != blame.size())
       throw new IllegalArgumentException("derivative problem, vector size mismatch");
 
-    for(int i = 0; i < outputs; ++i) {
+    for(int i = 0; i < inputs; ++i) {
       double derivative = blame.get(i) * (1.0 - (activation.get(i) * activation.get(i)));
       prevBlame.set(i, derivative);
     }

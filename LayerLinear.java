@@ -63,7 +63,7 @@ public class LayerLinear extends Layer {
 
 
     int pos = outputs;
-    for(int i = 0; i < x.size(); ++i) { // Review outer_product for help
+    for(int i = 0; i < inputs; ++i) { // Review outer_product for help
       double x_i = x.get(i);
       Vec temp = new Vec(gradient, pos, outputs);
       temp.addScaled(x_i, blame);

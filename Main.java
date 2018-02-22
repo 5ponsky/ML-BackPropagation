@@ -134,20 +134,21 @@ class Main
 		nn.layers.add(new LayerTanh(2));
 		nn.layers.add(new LayerLinear(2, 1));
 
-		//double[] w = {0.1, 0.2, 0.3, 0.4, 0.1, 0.2, 0.3};
-		//nn.weights = new Vec(w);
-		nn.initWeights();
+		double[] w = {0.1, 0.2, 0.3, 0.4, 0.1, 0.2, 0.3};
+		nn.weights = new Vec(w);
+		//nn.initWeights();
 
 		double[] x = {0.3};
 		Vec in = new Vec(x);
 
 		double[] t = {0.7};
 		Vec target = new Vec(t);
-		for(int i = 0; i < 40; ++i) {
+		for(int i = 0; i < 3; ++i) {
 			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 			System.out.println("EPOCH: " + i);
-			nn.predict(in);
+			//nn.predict(in);
 			nn.refineWeights(in, target, null, 0.1);
+			System.out.println(nn.weights);
 		}
 
 		System.out.println(nn.predict(in));
@@ -171,8 +172,8 @@ class Main
 
 		/// Normalize our training/testing data by dividing by 256.0
 		/// There are 256 possible values for any given entry
-		trainFeatures.scale((1 / 256.0));
-		testFeatures.scale((1 / 256.0));
+		trainFeatures.scale((1.0 / 256.0));
+		testFeatures.scale((1.0 / 256.0));
 
 		/// Build index arrays to shuffle training and testing data
 		int[] trainingIndices = new int[trainFeatures.rows()];
@@ -199,73 +200,88 @@ class Main
 		/// Training and testing
 		int mis = 10000;
 		int epoch = 0;
+
+		/// Continue to train until we get less than 350 misclassifications
 		while(mis > 350) {
-			System.out.println("==============================");
+			System.out.println("=====================================");
 			System.out.println("TRAINING EPOCH #" + epoch + '\n');
 
-			int break_for_testing = 0;
+			// Calculate the number of misclassifications
+			mis = nn.countMisclassifications(testFeatures, testLabels);
+			System.out.println("Misclassifications: " + mis);
+
+			// Train on the entire training dataset
 			for(int i = 0; i < trainFeatures.rows(); ++i) {
+				//Vec in = trainFeatures.row(trainingIndices[i]);
+				//double label = trainLabels.row(trainingIndices[i]).get(0);
+				Vec in = trainFeatures.row(i);
 
-				// Train the network on a single input
-				Vec in = new Vec(trainFeatures.row(trainingIndices[i]));
-				nn.predict(in);
+				double label = trainLabels.row(i).get(0);
+				Vec target = nn.formatLabel((int)label);
 
-				double label = trainLabels.row(trainingIndices[i]).get(0);
-				Vec target = new Vec(nn.formatLabel((int)label));
-				//System.out.println(target.toString());
+				// Refine the weights
 				nn.refineWeights(in, target, null, 0.03);
-
-				// Take a break every to often to test
-				// if(break_for_testing > 5000) {
-				// 	mis = nn.countMisclassifications(testFeatures, testLabels);
-				// 	System.out.println("Misclassifications: " + mis);
-				// 	break_for_testing = 0;
-				//
-				// 	if(mis < 350) // if misclassifications drop below 350 we're done
-				// 		break;
-				// }
 			}
 
-
-			System.out.println(nn.predict(testFeatures.row(0)));
+			// Try to predict the first label in the test data
+			// This is only here for debugging
+			System.out.println("Predicted: " + nn.predict(testFeatures.row(0)));
 			double label = testLabels.row(0).get(0);
 			Vec target = new Vec(nn.formatLabel((int)label));
-			System.out.println(target);
-			//System.out.println(y);
-
-			// mis = nn.countMisclassifications(testFeatures, testLabels);
-			// System.out.println("Misclassifications: " + mis);
+			System.out.println("Actual: " + target);
 
 			/// Shuffle training and testing indices
-			for(int i = 0; i < trainingIndices.length; ++i) {
-				int randomIndex = random.nextInt(trainingIndices.length);
-				int temp = trainingIndices[i];
-				trainingIndices[i] = trainingIndices[randomIndex];
-				trainingIndices[randomIndex] = temp;
-
-			}
-
-			for(int i = 0; i < testIndices.length; ++i) {
-				int randomIndex = random.nextInt(testIndices.length);
-				int temp = testIndices[i];
-				testIndices[i] = testIndices[randomIndex];
-				testIndices[randomIndex] = temp;
-			}
+			// for(int i = 0; i < trainingIndices.length; ++i) {
+			// 	int randomIndex = random.nextInt(trainingIndices.length);
+			// 	int temp = trainingIndices[i];
+			// 	trainingIndices[i] = trainingIndices[randomIndex];
+			// 	trainingIndices[randomIndex] = temp;
+			//
+			// }
+			//
+			// for(int i = 0; i < testIndices.length; ++i) {
+			// 	int randomIndex = random.nextInt(testIndices.length);
+			// 	int temp = testIndices[i];
+			// 	testIndices[i] = testIndices[randomIndex];
+			// 	testIndices[randomIndex] = temp;
+			// }
 
 			++epoch;
 		}
-
-		/// Test on the fully trained net
-		// System.out.println("now testing on fully trained set")
-		// for(int i = 0; i < testFeatures.rows(); ++i) {
-		//
-		// }
 	}
 
 
 	public static void testNet1() {
+		Matrix testFeatures = new Matrix();
+		testFeatures.loadARFF("data/test_feat.arff");
+		Matrix testLabels = new Matrix();
+		testLabels.loadARFF("data/test_lab.arff");
+
 		NeuralNet nn = new NeuralNet();
 
+		nn.layers.add(new LayerLinear(784, 10));
+		nn.initWeights();
+		for(int j = 0; j < 10; ++j) { // just trying 10 reps
+			for(int i = 0; i < testFeatures.rows(); ++i) {
+				Vec label = nn.formatLabel((int)testLabels.row(i).get(0));
+				nn.refineWeights(testFeatures.row(i), label, nn.weights, 0.001);
+				if(i % 100 == 0)
+					System.out.println(nn.weights);
+			}
+			//System.out.println(nn.weights);
+		}
+		System.out.println("done");
+
+		Vec w = new Vec(nn.weights.size());
+		LayerLinear l = new LayerLinear(784, 10);
+		l.ordinary_least_squares(testFeatures, testLabels, w);
+
+		System.out.println(w);
+
+	}
+
+	public static void testNet2() {
+		NeuralNet nn = new NeuralNet();
 		nn.layers.add(new LayerLinear(784, 80));
 		nn.layers.add(new LayerTanh(80));
 
@@ -275,20 +291,33 @@ class Main
 		nn.layers.add(new LayerLinear(30, 10));
 		nn.layers.add(new LayerTanh(10));
 
+		//double[] w = {0.1, 0.2, 0.3, 0.4, 0.1, 0.2, 0.3};
+		//nn.weights = new Vec(w);
 		nn.initWeights();
 
 		double[] x = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,185,159,151,60,36,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,222,254,254,254,254,241,198,198,198,198,198,198,198,198,170,52,0,0,0,0,0,0,0,0,0,0,0,0,67,114,72,114,163,227,254,225,254,254,254,250,229,254,254,140,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,17,66,14,67,67,67,59,21,236,254,106,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,253,209,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22,233,255,83,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,129,254,238,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,59,249,254,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,133,254,187,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,205,248,58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,126,254,182,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,75,251,240,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,221,254,166,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,203,254,219,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,38,254,254,77,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,224,254,115,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,133,254,254,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,61,242,254,254,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,254,254,219,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,254,207,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 		Vec in = new Vec(x);
+		in.scale((1.0/256.0));
 
-		//double[] t = {7};
 		double[] t = {0,0,0,0,0,0,0,1,0,0};
 		Vec target = new Vec(t);
-		for(int i = 0; i < 1000000; ++i) {
+		for(int i = 0; i < 10; ++i) {
 			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 			System.out.println("EPOCH: " + i);
+			//System.out.println(nn.weights);
 			Vec o = nn.predict(in);
-			nn.refineWeights(in, target, null, 0.003);
+			System.out.println(o);
+			//nn.refineWeights(in, target, null, 0.03);
+			nn.backProp(nn.weights, target);
+			nn.updateGradient(in);
+			nn.weights.addScaled(0.03, nn.gradient);
 		}
+
+		System.out.println(nn.predict(in));
+
+	}
+
+	public static void testGrad() {
 
 	}
 
@@ -298,8 +327,8 @@ class Main
 		//testChunks();
 		//run(new NeuralNet());
 		opticalCharacterRecognition();
-		//testNet();
+		//testNet2();
 		//testNet1();
-
+		//testNet();
 	}
 }
