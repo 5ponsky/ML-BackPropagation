@@ -50,17 +50,12 @@ public class LayerLinear extends Layer {
   }
 
   void updateGradient(Vec x, Vec gradient) {
-    // System.out.println("LIN updateGradient");
-    // System.out.println("input: " + x.toString());
-    // System.out.println("blame: " + blame.toString());
-    // System.out.println("gradient: " + gradient.toString());
 
     // Remove b
     Vec b = new Vec(gradient, 0, outputs);
 
     // add the blame to our bias
     b.add(blame);
-
 
     int pos = outputs;
     for(int i = 0; i < inputs; ++i) { // Review outer_product for help

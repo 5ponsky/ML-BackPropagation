@@ -212,11 +212,11 @@ class Main
 
 			// Train on the entire training dataset
 			for(int i = 0; i < trainFeatures.rows(); ++i) {
-				//Vec in = trainFeatures.row(trainingIndices[i]);
-				//double label = trainLabels.row(trainingIndices[i]).get(0);
-				Vec in = trainFeatures.row(i);
+				Vec in = trainFeatures.row(trainingIndices[i]);
+				double label = trainLabels.row(trainingIndices[i]).get(0);
+				//Vec in = trainFeatures.row(i);
 
-				double label = trainLabels.row(i).get(0);
+				//double label = trainLabels.row(i).get(0);
 				Vec target = nn.formatLabel((int)label);
 
 				// Refine the weights
@@ -248,77 +248,6 @@ class Main
 
 			++epoch;
 		}
-	}
-
-
-	public static void testNet1() {
-		Matrix testFeatures = new Matrix();
-		testFeatures.loadARFF("data/test_feat.arff");
-		Matrix testLabels = new Matrix();
-		testLabels.loadARFF("data/test_lab.arff");
-
-		NeuralNet nn = new NeuralNet();
-
-		nn.layers.add(new LayerLinear(784, 10));
-		nn.initWeights();
-		for(int j = 0; j < 10; ++j) { // just trying 10 reps
-			for(int i = 0; i < testFeatures.rows(); ++i) {
-				Vec label = nn.formatLabel((int)testLabels.row(i).get(0));
-				nn.refineWeights(testFeatures.row(i), label, nn.weights, 0.001);
-				if(i % 100 == 0)
-					System.out.println(nn.weights);
-			}
-			//System.out.println(nn.weights);
-		}
-		System.out.println("done");
-
-		Vec w = new Vec(nn.weights.size());
-		LayerLinear l = new LayerLinear(784, 10);
-		l.ordinary_least_squares(testFeatures, testLabels, w);
-
-		System.out.println(w);
-
-	}
-
-	public static void testNet2() {
-		NeuralNet nn = new NeuralNet();
-		nn.layers.add(new LayerLinear(784, 80));
-		nn.layers.add(new LayerTanh(80));
-
-		nn.layers.add(new LayerLinear(80, 30));
-		nn.layers.add(new LayerTanh(30));
-
-		nn.layers.add(new LayerLinear(30, 10));
-		nn.layers.add(new LayerTanh(10));
-
-		//double[] w = {0.1, 0.2, 0.3, 0.4, 0.1, 0.2, 0.3};
-		//nn.weights = new Vec(w);
-		nn.initWeights();
-
-		double[] x = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,185,159,151,60,36,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,222,254,254,254,254,241,198,198,198,198,198,198,198,198,170,52,0,0,0,0,0,0,0,0,0,0,0,0,67,114,72,114,163,227,254,225,254,254,254,250,229,254,254,140,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,17,66,14,67,67,67,59,21,236,254,106,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,253,209,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22,233,255,83,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,129,254,238,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,59,249,254,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,133,254,187,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,205,248,58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,126,254,182,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,75,251,240,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,221,254,166,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,203,254,219,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,38,254,254,77,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,224,254,115,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,133,254,254,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,61,242,254,254,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,254,254,219,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,254,207,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-		Vec in = new Vec(x);
-		in.scale((1.0/256.0));
-
-		double[] t = {0,0,0,0,0,0,0,1,0,0};
-		Vec target = new Vec(t);
-		for(int i = 0; i < 10; ++i) {
-			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-			System.out.println("EPOCH: " + i);
-			//System.out.println(nn.weights);
-			Vec o = nn.predict(in);
-			System.out.println(o);
-			//nn.refineWeights(in, target, null, 0.03);
-			nn.backProp(nn.weights, target);
-			nn.updateGradient(in);
-			nn.weights.addScaled(0.03, nn.gradient);
-		}
-
-		System.out.println(nn.predict(in));
-
-	}
-
-	public static void testGrad() {
-
 	}
 
 	public static void main(String[] args)

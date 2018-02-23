@@ -88,8 +88,7 @@ abstract class SupervisedLearner
 	double sum_squared_error(Matrix features, Matrix labels) {
 		if(features.rows() != labels.rows())
 			throw new IllegalArgumentException("Mistmatching number of rows");
-
-		System.out.println("-------------");
+			
 		double mis = 0;
 		for(int i = 0; i < features.rows(); i++) {
 			Vec feat = features.row(i);
@@ -113,19 +112,7 @@ abstract class SupervisedLearner
 		for(int i = 0; i < features.rows(); i++) {
 			Vec feat = features.row(i);
 			Vec pred = predict(feat);
-
-			//System.out.println("------------------------");
-			//System.out.println("pred: " + pred.toString());
-			// Force into one-hot
-			//System.out.println("------------");
-			//System.out.println(pred.toString());
-			//pred.oneHot();
-			//System.out.println("1-hot: " + pred.toString());
-
 			Vec lab = formatLabel((int)labels.row(i).get(0));
-			//System.out.println("----------------");
-			//System.out.println("lab: " + lab.toString());
-			//System.out.println(i + " " + pred.toString());
 			if(poorClassification(pred, lab))
 				mis++;
 		}

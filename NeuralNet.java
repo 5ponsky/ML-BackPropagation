@@ -23,6 +23,8 @@ public class NeuralNet extends SupervisedLearner {
       weightsSize += l.getNumberWeights();
     }
     weights = new Vec(weightsSize);
+    gradient = new Vec(weightsSize);
+    gradient.fill(0.0);
     //gradient = new Vec(weightsSize);
     //gradient.fill(0.0);
 
@@ -73,8 +75,7 @@ public class NeuralNet extends SupervisedLearner {
   }
 
   void updateGradient(Vec x) {
-    gradient = new Vec(weights.size());
-    gradient.fill(0.0);
+    //gradient.fill(0.0);
 
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
@@ -90,6 +91,13 @@ public class NeuralNet extends SupervisedLearner {
       pos += gradChunk;
     }
   }
+
+  // void updateGradient(Vec x) {
+  //   layers.get(0).updateGradient(x);
+  //   for(int i = 1; i < layers.size(); ++i) {
+  //     layers.get(i).updateGradient(layers.get(i-1).activation);
+  //   }
+  // }
 
   void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
     weights = this.weights;
