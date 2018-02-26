@@ -160,9 +160,9 @@ public class Vec {
 
 		for(int i = 0; i < this.size(); ++i) {
 			if(i != maxIndex)
-				this.set(i, 0.0);
+				this.vals[i] = 0.0;
 		}
-		this.set(maxIndex, 1.0);
+		this.vals[maxIndex] = 1.0;
 	}
 
 	public void addScaled(double scalar, Vec that) {

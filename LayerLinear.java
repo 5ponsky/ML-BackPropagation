@@ -28,25 +28,30 @@ public class LayerLinear extends Layer {
   }
 
   Vec backProp(Vec weights, Vec prevBlame) {
-    Matrix temp = new Matrix(1, prevBlame.size());
-    temp.row(0).add(prevBlame);
-
     blame.fill(0.0);
     blame.add(prevBlame);
 
     int pos = outputs; // Ignore b
-    Matrix mTranspose = new Matrix(inputs, outputs);
+    Matrix mTranspose = new Matrix(outputs, inputs);
 
+    /// Turn our section of weights into a Matrix
     for(int i = 0; i < mTranspose.rows(); ++i) {
       for(int j = 0; j < mTranspose.cols(); ++j) {
         mTranspose.row(i).set(j, weights.get(pos));
         ++pos;
       }
     }
-
     Matrix t = mTranspose.transpose();
-    Matrix nextBlame = Matrix.multiply(temp, t, false, false);
-    return nextBlame.row(0);
+
+    /// Create the blame on the preceding layer
+    Vec nextBlame = new Vec(inputs);
+    nextBlame.fill(0.0);
+    for(int i = 0; i < nextBlame.size(); ++i) {
+      double newEntry = prevBlame.dotProduct(t.row(i));
+      nextBlame.set(i, newEntry);
+    }
+
+    return nextBlame;
   }
 
   void updateGradient(Vec x, Vec gradient) {
@@ -57,6 +62,7 @@ public class LayerLinear extends Layer {
     // add the blame to our bias
     b.add(blame);
 
+    // Compute the outer product as scaling copies of X by each element in b
     int pos = outputs;
     for(int i = 0; i < outputs; ++i) {
       double b_i = b.get(i);

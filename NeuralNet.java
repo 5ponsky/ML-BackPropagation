@@ -13,8 +13,7 @@ public class NeuralNet extends SupervisedLearner {
     layers = new ArrayList<Layer>();
   }
 
-  void initWeights() {
-    Random random = new Random(1234);
+  void initWeights(Random r) {
 
     // Calculate the total number of weights
     int weightsSize = 0;
@@ -31,7 +30,7 @@ public class NeuralNet extends SupervisedLearner {
       Layer l = layers.get(i);
       if(l.getNumberWeights() > 0) {
         for(int j = 0; j < l.getNumberWeights(); ++j) {
-          weights.set(pos, (Math.max(0.03, (1.0 / l.inputs)) * random.nextGaussian()));
+          weights.set(pos, (Math.max(0.03, (1.0 / l.inputs)) * r.nextGaussian()));
           ++pos;
         }
       }
@@ -42,7 +41,7 @@ public class NeuralNet extends SupervisedLearner {
 
   // TODO: backprop strips the wrong set of weights
 
-  void backProp(Vec weights, Vec target) {
+  void backProp(Vec target) {
     weights = this.weights;
     //layers.get(layers.size() - 1).blame = new Vec(target);
     //layers.get(layers.size() - 1).blame.addScaled(-1, layers.get(layers.size()-1).activation);
@@ -83,13 +82,12 @@ public class NeuralNet extends SupervisedLearner {
   }
 
   void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
-    weights = this.weights;
     gradient.fill(0.0);
 
     predict(x);
 
     // Compute the blame on each layer
-    backProp(weights, y);
+    backProp(y);
 
     // Compute the gradient
     updateGradient(x);

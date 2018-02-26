@@ -24,8 +24,9 @@ abstract class SupervisedLearner
 			Vec feat = features.row(i);
 			Vec pred = predict(feat);
 			Vec lab = formatLabel((int)labels.row(i).get(0));
-			if(poorClassification(pred, lab))
+			if(poorClassification(pred, lab)) {
 				mis++;
+			}
 		}
 		return mis;
 	}
