@@ -19,34 +19,34 @@ public class LayerLinear extends Layer {
       pos += inputs;
     }
     activation.add(b);
-    //
-    // System.out.println("------------------------------------------");
+
+    // System.out.println('\n' + "-------------------------");
     // System.out.println("LIN activate");
-    // System.out.println("input: " + x.toString());
-    // System.out.println("weights: " + weights.toString());
-    // System.out.println("Computed LINEAR activation: " + activation.toString());
+    // System.out.println("input: " + x);
+    // System.out.println("weights: " + weights);
+    // System.out.println("activation: " + activation);
   }
 
-  void backProp(Vec weights, Vec prevBlame) {
-    //System.out.println("LIN Backprop weights: " + weights.toString());
+  Vec backProp(Vec weights, Vec prevBlame) {
+    Matrix temp = new Matrix(1, prevBlame.size());
+    temp.row(0).add(prevBlame);
+
+    blame.fill(0.0);
+    blame.add(prevBlame);
+
     int pos = outputs; // Ignore b
     Matrix mTranspose = new Matrix(inputs, outputs);
-    for(int i = 0; i < outputs; ++i) {
-      Vec v = new Vec(weights, pos, inputs);
-      for(int j = 0; j < inputs; ++j) {
-        Vec w = mTranspose.row(j);
-        w.set(i, v.get(j));
+
+    for(int i = 0; i < mTranspose.rows(); ++i) {
+      for(int j = 0; j < mTranspose.cols(); ++j) {
+        mTranspose.row(i).set(j, weights.get(pos));
+        ++pos;
       }
-      pos += inputs;
     }
 
-    for(int i = 0; i < inputs; ++i) {
-      Vec v = mTranspose.row(i);
-      double newEntry = v.dotProduct(blame);
-      prevBlame.set(i, newEntry);
-    }
-    //ystem.out.println("Blame on this LINEAR layer: " + blame.toString());
-
+    Matrix t = mTranspose.transpose();
+    Matrix nextBlame = Matrix.multiply(temp, t, false, false);
+    return nextBlame.row(0);
   }
 
   void updateGradient(Vec x, Vec gradient) {
@@ -58,11 +58,11 @@ public class LayerLinear extends Layer {
     b.add(blame);
 
     int pos = outputs;
-    for(int i = 0; i < inputs; ++i) { // Review outer_product for help
-      double x_i = x.get(i);
-      Vec temp = new Vec(gradient, pos, outputs);
-      temp.addScaled(x_i, blame);
-      pos += outputs;
+    for(int i = 0; i < outputs; ++i) {
+      double b_i = b.get(i);
+      Vec temp = new Vec(gradient, pos, inputs);
+      temp.addScaled(b_i, x);
+      pos += inputs;
     }
   }
 

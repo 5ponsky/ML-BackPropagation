@@ -15,6 +15,62 @@ abstract class SupervisedLearner
 	/// Make a prediction
 	abstract Vec predict(Vec in);
 
+	/// Measures the misclassifications with the provided test data
+	int countMisclassifications(Matrix features, Matrix labels) {
+		if(features.rows() != labels.rows())
+			throw new IllegalArgumentException("Mismatching number of rows");
+		int mis = 0;
+		for(int i = 0; i < features.rows(); i++) {
+			Vec feat = features.row(i);
+			Vec pred = predict(feat);
+			Vec lab = formatLabel((int)labels.row(i).get(0));
+			if(poorClassification(pred, lab))
+				mis++;
+		}
+		return mis;
+	}
+
+	Vec formatLabel(int label) {
+		if(label > 9 || label < 0)
+			throw new IllegalArgumentException("not a valid labels!");
+
+		double[] res = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		res[label] = 1;
+		return new Vec(res);
+	}
+
+	boolean poorClassification(Vec pred, Vec lab) {
+		if(pred.size() != lab.size())
+			throw new IllegalArgumentException("vector size mismatch!");
+
+		pred.oneHot();
+		for(int i = 0; i < pred.size(); ++i) {
+			if(pred.get(i) != lab.get(i))
+				return true;
+		}
+		return false;
+	}
+
+
+	double sum_squared_error(Matrix features, Matrix labels) {
+		if(features.rows() != labels.rows())
+			throw new IllegalArgumentException("Mistmatching number of rows");
+
+		double mis = 0;
+		for(int i = 0; i < features.rows(); i++) {
+			Vec feat = features.row(i);
+			Vec pred = predict(feat);
+			Vec lab = labels.row(i);
+			for(int j = 0; j < lab.size(); j++) {
+				double blame = (lab.get(j) - pred.get(j)) * (lab.get(j) - pred.get(j));
+				System.out.println(i + " " + pred);
+				mis = mis + blame;
+			}
+		}
+
+		return mis;
+	}
+
 	double cross_validation(int r, int f, Matrix featureData, Matrix labelData) {
 		Random random = new Random(1234);
 
@@ -84,67 +140,4 @@ abstract class SupervisedLearner
 		rmse = Math.sqrt(mse/repititions);
 		return rmse;
 	}
-
-	double sum_squared_error(Matrix features, Matrix labels) {
-		if(features.rows() != labels.rows())
-			throw new IllegalArgumentException("Mistmatching number of rows");
-			
-		double mis = 0;
-		for(int i = 0; i < features.rows(); i++) {
-			Vec feat = features.row(i);
-			Vec pred = predict(feat);
-			Vec lab = labels.row(i);
-			for(int j = 0; j < lab.size(); j++) {
-				double blame = (lab.get(j) - pred.get(j)) * (lab.get(j) - pred.get(j));
-				System.out.println(i + " " + pred);
-				mis = mis + blame;
-			}
-		}
-
-		return mis;
-	}
-
-	/// Measures the misclassifications with the provided test data
-	int countMisclassifications(Matrix features, Matrix labels) {
-		if(features.rows() != labels.rows())
-			throw new IllegalArgumentException("Mismatching number of rows");
-		int mis = 0;
-		for(int i = 0; i < features.rows(); i++) {
-			Vec feat = features.row(i);
-			Vec pred = predict(feat);
-			Vec lab = formatLabel((int)labels.row(i).get(0));
-			if(poorClassification(pred, lab))
-				mis++;
-		}
-		return mis;
-	}
-
-	Vec formatLabel(int label) {
-		if(label > 9 || label < 0)
-			throw new IllegalArgumentException("not a valid labels!");
-
-		double[] res = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		res[label] = 1;
-		return new Vec(res);
-	}
-
-	boolean poorClassification(Vec pred, Vec lab) {
-		if(pred.size() != lab.size())
-			throw new IllegalArgumentException("vector size mismatch!");
-
-		double tolerance = 0.4;
-		double sse = 0;
-		// for(int i = 0; i < pred.size(); ++i) {
-		// 	sse = (pred.get(i) - lab.get(i)) * (pred.get(i) - lab.get(i));
-		// 	if(sse > tolerance)
-		// 		return true;
-		// }
-		pred.oneHot();
-		for(int i = 0; i < pred.size(); ++i) {
-			if(pred.get(i) != lab.get(i))
-				return true;
-		}
-		return false;
-	}
-
 }

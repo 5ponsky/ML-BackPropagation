@@ -24,9 +24,6 @@ public class NeuralNet extends SupervisedLearner {
     }
     weights = new Vec(weightsSize);
     gradient = new Vec(weightsSize);
-    gradient.fill(0.0);
-    //gradient = new Vec(weightsSize);
-    //gradient.fill(0.0);
 
     // Randomize the values of the weights
     int pos = 0;
@@ -34,12 +31,12 @@ public class NeuralNet extends SupervisedLearner {
       Layer l = layers.get(i);
       if(l.getNumberWeights() > 0) {
         for(int j = 0; j < l.getNumberWeights(); ++j) {
-          weights.set(pos, Math.max(0.03, (1.0 / l.inputs)) * random.nextGaussian());
+          weights.set(pos, (Math.max(0.03, (1.0 / l.inputs)) * random.nextGaussian()));
           ++pos;
         }
       }
-
     }
+
     System.out.println(weights);
   }
 
@@ -47,35 +44,31 @@ public class NeuralNet extends SupervisedLearner {
 
   void backProp(Vec weights, Vec target) {
     weights = this.weights;
+    //layers.get(layers.size() - 1).blame = new Vec(target);
+    //layers.get(layers.size() - 1).blame.addScaled(-1, layers.get(layers.size()-1).activation);
 
-    // ERROR ON OUTPUT LAYER BLAME ON EPOCH #2!!!!!!!
-    layers.get(layers.size() - 1).blame = new Vec(target);
-    layers.get(layers.size() - 1).blame.addScaled(-1, layers.get(layers.size()-1).activation);
-    //System.out.println("output blame: " + layers.get(layers.size() - 1).blame);
+    Vec blame = new Vec(target.size());
+    blame.add(target);
+    blame.addScaled(-1, layers.get(layers.size()-1).activation);
+
+
 
     int pos = weights.size();
-    Vec prevBlame;
-    for(int i = layers.size()-1; i > 0; --i) {
+    for(int i = layers.size()-1; i >= 0; --i) {
       Layer l = layers.get(i);
+      //prevBlame = new Vec(l.inputs);
 
-      // prevBlame := inputs of this layer (outputs of prevLayer)
-      prevBlame = new Vec(l.inputs);
-
-      // Calculate the chunk of the weights vector
-      // That we need for backProp
       int weightsChunk = l.getNumberWeights();
       pos -= weightsChunk;
       Vec w = new Vec(weights, pos, weightsChunk);
 
-      // Compute the blame for the preceding layer
-      // preceding := closer to layers.get(0)
-      l.backProp(w, prevBlame);
-      layers.get(i-1).blame = new Vec(prevBlame);
+      blame = l.backProp(w, blame);
+
+      //layers.get(i-1).blame = prevBlame;
     }
   }
 
   void updateGradient(Vec x) {
-    //gradient.fill(0.0);
 
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
@@ -84,25 +77,15 @@ public class NeuralNet extends SupervisedLearner {
       Vec v = new Vec(gradient, pos, gradChunk);
 
       l.updateGradient(x, v);
-      x = l.activation; // I think the problem with update gradient is here
-      // I'm not calling activate each epoch to compute a different
-      // distance from the preferred value?
-      // I need to work in activate into my epoch somehow
+      x = new Vec(l.activation);
       pos += gradChunk;
     }
   }
 
-  // void updateGradient(Vec x) {
-  //   layers.get(0).updateGradient(x);
-  //   for(int i = 1; i < layers.size(); ++i) {
-  //     layers.get(i).updateGradient(layers.get(i-1).activation);
-  //   }
-  // }
-
   void refineWeights(Vec x, Vec y, Vec weights, double learning_rate) {
     weights = this.weights;
+    gradient.fill(0.0);
 
-    // compute the activation
     predict(x);
 
     // Compute the blame on each layer
@@ -112,20 +95,18 @@ public class NeuralNet extends SupervisedLearner {
     updateGradient(x);
 
     // Adjust the weights per the learning_rate
-    //System.out.println("before weights: " + weights);
-    this.weights.addScaled(learning_rate, gradient);
-    //System.out.println("after weights: " + weights);
-    //System.out.println(layers.get(layers.size()-1).activation);
-    //System.out.println(y);
-
-    //System.out.println(weights.toString());
+    gradient.scale(learning_rate);
+    this.weights.add(gradient);
   }
 
-  void central_difference(Vec x, double step_size) {
+  void central_difference(Vec x) {
 
   }
 
   Vec predict(Vec in) {
+    Vec curr = new Vec(in.size());
+    curr.add(in);
+
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
       Layer l = layers.get(i);
@@ -136,17 +117,15 @@ public class NeuralNet extends SupervisedLearner {
       pos += l.activation.size();
     }
 
-    return new Vec(layers.get(layers.size()-1).activation);
+    return (layers.get(layers.size()-1).activation);
   }
 
   /// Train this supervised learner
   void train(Matrix features, Matrix labels) {
-    layers.clear();
-    LayerLinear ll = new LayerLinear(features.cols(), labels.cols());
-    weights = new Vec(labels.cols() + (features.cols() * labels.cols()));
-    layers.add(ll);
-
-
+    // layers.clear();
+    // LayerLinear ll = new LayerLinear(features.cols(), labels.cols());
+    // weights = new Vec(labels.cols() + (features.cols() * labels.cols()));
+    // layers.add(ll);
     for(int i = 0; i < layers.size(); ++i) {
       //layers.get(i).ordinary_least_squares(features, labels, weights);
     }

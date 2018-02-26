@@ -22,7 +22,7 @@ abstract class Layer
 
 	abstract void activate(Vec weights, Vec x);
 
-	abstract void backProp(Vec weights, Vec prevBlame);
+	abstract Vec backProp(Vec weights, Vec prevBlame);
 
 	abstract void updateGradient(Vec x, Vec gradient);
 
