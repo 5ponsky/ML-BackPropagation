@@ -16,8 +16,8 @@ public class Vec {
 	public double[] data() { return vals; }
 	public double get(int index) { return vals[start + index]; }
 	public void set(int index, double value) {
-		if(start + index > len)
-			throw new IllegalArgumentException("index not in vector!");
+		//if(start + index > len)
+		//	throw new IllegalArgumentException("index not in vector!");
 		vals[start + index] = value;
 	}
 

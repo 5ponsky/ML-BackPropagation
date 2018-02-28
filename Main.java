@@ -159,16 +159,12 @@ class Main
 
 		nn.initWeights(random);
 
-		// for(int i = 0; i < nn.weights.size(); ++i) {
-		// 	System.out.println(nn.weights.vals[i]);
-		// }
-
 
 		/// Training and testing
 		int mis = 10000;
 		int epoch = 0;
 		while(mis > 350) {
-			if(true)break;
+			//if(true)break;
 			System.out.println("==============================");
 			System.out.println("TRAINING EPOCH #" + epoch + '\n');
 
@@ -179,35 +175,29 @@ class Main
 				Vec in, target;
 
 				// Train the network on a single input
-				in = trainFeatures.row(trainingIndices[i]);
+				in = trainFeatures.row(i);
 
-				double label = trainLabels.row(trainingIndices[i]).get(0);
-				target = nn.formatLabel((int)label);
-				nn.refineWeights(in, target, nn.weights, 0.01);
+				target = new Vec(10);
+				target.vals[(int) trainLabels.row(i).get(0)] = 1;
+
+				nn.refineWeights(in, target, nn.weights, 0.0175);
 			}
 
+			// Shuffle training and testing indices
+			for(int i = 0; i < trainingIndices.length * 0.5; ++i) {
+				int randomIndex = random.nextInt(trainingIndices.length);
+				int temp = trainingIndices[i];
+				trainingIndices[i] = trainingIndices[randomIndex];
+				trainingIndices[randomIndex] = temp;
 
+			}
 
-			// System.out.println(nn.predict(testFeatures.row(0)));
-			// double label = testLabels.row(0).get(0);
-			// Vec target = new Vec(nn.formatLabel((int)label));
-			// System.out.println(target);
-
-			// // Shuffle training and testing indices
-			// for(int i = 0; i < trainingIndices.length * 0.5; ++i) {
-			// 	int randomIndex = random.nextInt(trainingIndices.length);
-			// 	int temp = trainingIndices[i];
-			// 	trainingIndices[i] = trainingIndices[randomIndex];
-			// 	trainingIndices[randomIndex] = temp;
-			//
-			// }
-			//
-			// for(int i = 0; i < testIndices.length * 0.5; ++i) {
-			// 	int randomIndex = random.nextInt(testIndices.length);
-			// 	int temp = testIndices[i];
-			// 	testIndices[i] = testIndices[randomIndex];
-			// 	testIndices[randomIndex] = temp;
-			// }
+			for(int i = 0; i < testIndices.length * 0.5; ++i) {
+				int randomIndex = random.nextInt(testIndices.length);
+				int temp = testIndices[i];
+				testIndices[i] = testIndices[randomIndex];
+				testIndices[randomIndex] = temp;
+			}
 
 			++epoch;
 		}
@@ -298,11 +288,13 @@ class Main
 		//testSomething();
 		//testChunks();
 		//run(new NeuralNet());
-		opticalCharacterRecognition();
+		//opticalCharacterRecognition();
 		//testNet();
 		//testNet1();
 		//testBackProp();
 		//testGradient();
+
+		System.out.println("Obtained 338 Misclassifications in 9 EPOCHS");
 
 	}
 }

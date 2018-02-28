@@ -15,6 +15,8 @@ public class LayerTanh extends Layer {
       activation.set(i, Math.tanh(x.get(i)));
     }
 
+    //System.out.println("TANH: " + activation);
+
     // System.out.println('\n' + "-------------------------");
     // System.out.println("TANH activate");
     // System.out.println("input: " + x);

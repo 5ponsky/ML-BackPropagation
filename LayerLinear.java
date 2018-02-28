@@ -10,8 +10,15 @@ public class LayerLinear extends Layer {
     super(inputs, outputs);
   }
 
+  void initWeights(Vec weights, Random random) {
+    for(int i = outputs; i < weights.size(); ++i) {
+      weights.set(i, (Math.max(0.03, (1.0 / inputs)) * random.nextGaussian()));
+    }
+  }
+
   void activate(Vec weights, Vec x) {
     Vec b = new Vec(weights, 0, outputs);
+    //System.out.println("B: " + b);
     int pos = outputs;
     for(int i = 0; i < outputs; ++i) {
       Vec temp = new Vec(weights, pos, inputs);
@@ -21,6 +28,7 @@ public class LayerLinear extends Layer {
     }
     activation.add(b);
 
+    //System.out.println("LIN: " + activation);
     // System.out.println('\n' + "-------------------------");
     // System.out.println("LIN activate");
     // System.out.println("input: " + x);
@@ -71,10 +79,6 @@ public class LayerLinear extends Layer {
       temp.addScaled(b_i, x);
       pos += inputs;
     }
-  }
-
-  void initWeights(Vec weights, Random random) {
-
   }
 
 

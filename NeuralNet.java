@@ -35,6 +35,10 @@ public class NeuralNet extends SupervisedLearner {
 
       pos += weightsChunk;
     }
+
+    // for(int i = 0; i < weights.size(); ++i) {
+    //   System.out.println(weights.vals[i]);
+    // }
   }
 
   // TODO: backprop strips the wrong set of weights
@@ -91,8 +95,7 @@ public class NeuralNet extends SupervisedLearner {
     updateGradient(x);
 
     // Adjust the weights per the learning_rate
-    gradient.scale(learning_rate);
-    this.weights.add(gradient);
+    this.weights.addScaled(learning_rate, gradient);
   }
 
   void central_difference(Vec x) {
@@ -110,7 +113,7 @@ public class NeuralNet extends SupervisedLearner {
       Vec v = new Vec(weights, pos, weightsChunk);
       l.activate(v, in);
       in = l.activation;
-      pos += l.activation.size();
+      pos += weightsChunk;
     }
 
     return (layers.get(layers.size()-1).activation);
