@@ -1,4 +1,4 @@
-
+import java.util.Random;
 
 
 public class LayerTanh extends Layer {
@@ -42,4 +42,8 @@ public class LayerTanh extends Layer {
 
   void updateGradient(Vec x, Vec gradient) {
   } // Tanh contains no weights so this is empty
+
+  void initWeights(Vec weights, Random random) {
+  } // Tanh contains no weights so this is empty
+
 }

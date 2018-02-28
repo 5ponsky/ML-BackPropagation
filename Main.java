@@ -167,7 +167,8 @@ class Main
 		/// Training and testing
 		int mis = 10000;
 		int epoch = 0;
-		while(mis > 350) { 
+		while(mis > 350) {
+			if(true)break;
 			System.out.println("==============================");
 			System.out.println("TRAINING EPOCH #" + epoch + '\n');
 

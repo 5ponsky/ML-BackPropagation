@@ -1,3 +1,5 @@
+import java.util.Random;
+
 abstract class Layer
 {
 	protected Vec activation;
@@ -27,4 +29,6 @@ abstract class Layer
 	abstract void updateGradient(Vec x, Vec gradient);
 
 	abstract int getNumberWeights();
+
+	abstract void initWeights(Vec weights, Random random);
 }

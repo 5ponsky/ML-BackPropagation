@@ -24,16 +24,16 @@ public class NeuralNet extends SupervisedLearner {
     weights = new Vec(weightsSize);
     gradient = new Vec(weightsSize);
 
-    // Randomize the values of the weights
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
       Layer l = layers.get(i);
-      if(l.getNumberWeights() > 0) {
-        for(int j = 0; j < l.getNumberWeights(); ++j) {
-          weights.set(pos, (Math.max(0.03, (1.0 / l.inputs)) * r.nextGaussian()));
-          ++pos;
-        }
-      }
+
+      int weightsChunk = l.getNumberWeights();
+      Vec w = new Vec(weights, pos, weightsChunk);
+
+      l.initWeights(w, r);
+
+      pos += weightsChunk;
     }
   }
 

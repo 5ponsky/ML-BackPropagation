@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Random;
 
 
 public class LayerLinear extends Layer {
@@ -70,6 +71,10 @@ public class LayerLinear extends Layer {
       temp.addScaled(b_i, x);
       pos += inputs;
     }
+  }
+
+  void initWeights(Vec weights, Random random) {
+
   }
 
 
