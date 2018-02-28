@@ -231,68 +231,8 @@ class Main
 		System.out.println(g);
 	}
 
-	public static void testData() {
-		NeuralNet nn = new NeuralNet();
-		nn.layers.add(new LayerLinear(1, 2));
-		nn.layers.add(new LayerTanh(2));
-		nn.layers.add(new LayerLinear(2, 1));
-		//nn.layers.add(new LayerTanh(1));
-
-
-		// nn.layers.add(new LayerLinear(3, 2));
-		// nn.layers.add(new LayerTanh(2));
-		// nn.layers.add(new LayerLinear(2, 1));
-		// nn.layers.add(new LayerTanh(1));
-
-		double[] w = {0.1, 0.2, 0.3, 0.4, 0.1, 0.2, 0.3};
-		//nn.weights = new Vec(24);
-		nn.weights = new Vec(w);
-		nn.gradient = new Vec(nn.weights.size());
-		nn.gradient.fill(0.0);
-		//nn.initWeights();
-
-		//double[] x = {0.3, 0.7, 0.2};
-		double[] x = {0.3};
-		Vec in = new Vec(x);
-
-		double[] t = {0.7};
-		Vec target = new Vec(t);
-		for(int i = 0; i < 3; ++i) {
-			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-			System.out.println("EPOCH: " + i + '\n');
-
-			Vec o = nn.predict(in);
-			System.out.println("=======" + '\n' + "final output: " + o);
-
-
-			nn.refineWeights(in, target, null, 0.1);
-			System.out.println("after weights:");
-		}
-		System.out.println("final weights: " + nn.weights);
-
-		System.out.println(nn.predict(in));
-
-	}
-
-	public static void oneHot() {
-		double[] v = {0.012, 0.344, 0.005, 0.233, 0.543, 0.2345};
-		Vec vec = new Vec(v);
-		System.out.println(vec);
-		vec.oneHot();
-		System.out.println(vec);
-	}
-
 	public static void main(String[] args)
 	{
-		//testData();
-		//testSomething();
-		//testChunks();
-		//run(new NeuralNet());
-		//opticalCharacterRecognition();
-		//testNet();
-		//testNet1();
-		//testBackProp();
-		//testGradient();
 
 		System.out.println("Obtained 338 Misclassifications in 9 EPOCHS");
 

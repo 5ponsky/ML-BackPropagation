@@ -35,24 +35,12 @@ public class NeuralNet extends SupervisedLearner {
 
       pos += weightsChunk;
     }
-
-    // for(int i = 0; i < weights.size(); ++i) {
-    //   System.out.println(weights.vals[i]);
-    // }
   }
 
-  // TODO: backprop strips the wrong set of weights
-
   void backProp(Vec target) {
-    weights = this.weights;
-    //layers.get(layers.size() - 1).blame = new Vec(target);
-    //layers.get(layers.size() - 1).blame.addScaled(-1, layers.get(layers.size()-1).activation);
-
     Vec blame = new Vec(target.size());
     blame.add(target);
     blame.addScaled(-1, layers.get(layers.size()-1).activation);
-
-
 
     int pos = weights.size();
     for(int i = layers.size()-1; i >= 0; --i) {
@@ -64,8 +52,6 @@ public class NeuralNet extends SupervisedLearner {
       Vec w = new Vec(weights, pos, weightsChunk);
 
       blame = l.backProp(w, blame);
-
-      //layers.get(i-1).blame = prevBlame;
     }
   }
 
@@ -98,14 +84,7 @@ public class NeuralNet extends SupervisedLearner {
     this.weights.addScaled(learning_rate, gradient);
   }
 
-  void central_difference(Vec x) {
-
-  }
-
   Vec predict(Vec in) {
-    Vec curr = new Vec(in.size());
-    curr.add(in);
-
     int pos = 0;
     for(int i = 0; i < layers.size(); ++i) {
       Layer l = layers.get(i);
@@ -121,10 +100,6 @@ public class NeuralNet extends SupervisedLearner {
 
   /// Train this supervised learner
   void train(Matrix features, Matrix labels) {
-    // layers.clear();
-    // LayerLinear ll = new LayerLinear(features.cols(), labels.cols());
-    // weights = new Vec(labels.cols() + (features.cols() * labels.cols()));
-    // layers.add(ll);
     for(int i = 0; i < layers.size(); ++i) {
       //layers.get(i).ordinary_least_squares(features, labels, weights);
     }

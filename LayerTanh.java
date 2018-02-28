@@ -14,14 +14,6 @@ public class LayerTanh extends Layer {
     for(int i = 0; i < outputs; ++i) {
       activation.set(i, Math.tanh(x.get(i)));
     }
-
-    //System.out.println("TANH: " + activation);
-
-    // System.out.println('\n' + "-------------------------");
-    // System.out.println("TANH activate");
-    // System.out.println("input: " + x);
-    // System.out.println("weights: " + weights);
-    // System.out.println("activation: " + activation);
   }
 
   // NOTE: this layer contains no weights, so the weights parameter is unused

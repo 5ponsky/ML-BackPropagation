@@ -18,7 +18,7 @@ public class LayerLinear extends Layer {
 
   void activate(Vec weights, Vec x) {
     Vec b = new Vec(weights, 0, outputs);
-    //System.out.println("B: " + b);
+    
     int pos = outputs;
     for(int i = 0; i < outputs; ++i) {
       Vec temp = new Vec(weights, pos, inputs);
@@ -27,13 +27,6 @@ public class LayerLinear extends Layer {
       pos += inputs;
     }
     activation.add(b);
-
-    //System.out.println("LIN: " + activation);
-    // System.out.println('\n' + "-------------------------");
-    // System.out.println("LIN activate");
-    // System.out.println("input: " + x);
-    // System.out.println("weights: " + weights);
-    // System.out.println("activation: " + activation);
   }
 
   Vec backProp(Vec weights, Vec prevBlame) {
