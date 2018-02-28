@@ -67,7 +67,7 @@ class Main
 
 	public static void testOLS() {
 		LayerLinear ll = new LayerLinear(13, 1);
-		Random random = new Random(1234);
+		Random random = new Random(123456);
 		Vec weights = new Vec(14);
 
 		for(int i = 0; i < 14; ++i) {
@@ -118,7 +118,7 @@ class Main
 
 
 	public static void opticalCharacterRecognition() {
-		Random random = new Random(1234); // used for shuffling data
+		Random random = new Random(123456); // used for shuffling data
 
 
 		/// Load training and testing data
@@ -159,10 +159,15 @@ class Main
 
 		nn.initWeights(random);
 
+		// for(int i = 0; i < nn.weights.size(); ++i) {
+		// 	System.out.println(nn.weights.vals[i]);
+		// }
+
+
 		/// Training and testing
 		int mis = 10000;
 		int epoch = 0;
-		while(mis > 350) {
+		while(mis > 350) { 
 			System.out.println("==============================");
 			System.out.println("TRAINING EPOCH #" + epoch + '\n');
 
@@ -182,63 +187,29 @@ class Main
 
 
 
-			System.out.println(nn.predict(testFeatures.row(0)));
-			double label = testLabels.row(0).get(0);
-			Vec target = new Vec(nn.formatLabel((int)label));
-			System.out.println(target);
+			// System.out.println(nn.predict(testFeatures.row(0)));
+			// double label = testLabels.row(0).get(0);
+			// Vec target = new Vec(nn.formatLabel((int)label));
+			// System.out.println(target);
 
-			// Shuffle training and testing indices
-			for(int i = 0; i < trainingIndices.length * 0.5; ++i) {
-				int randomIndex = random.nextInt(trainingIndices.length);
-				int temp = trainingIndices[i];
-				trainingIndices[i] = trainingIndices[randomIndex];
-				trainingIndices[randomIndex] = temp;
-
-			}
-
-			for(int i = 0; i < testIndices.length * 0.5; ++i) {
-				int randomIndex = random.nextInt(testIndices.length);
-				int temp = testIndices[i];
-				testIndices[i] = testIndices[randomIndex];
-				testIndices[randomIndex] = temp;
-			}
+			// // Shuffle training and testing indices
+			// for(int i = 0; i < trainingIndices.length * 0.5; ++i) {
+			// 	int randomIndex = random.nextInt(trainingIndices.length);
+			// 	int temp = trainingIndices[i];
+			// 	trainingIndices[i] = trainingIndices[randomIndex];
+			// 	trainingIndices[randomIndex] = temp;
+			//
+			// }
+			//
+			// for(int i = 0; i < testIndices.length * 0.5; ++i) {
+			// 	int randomIndex = random.nextInt(testIndices.length);
+			// 	int temp = testIndices[i];
+			// 	testIndices[i] = testIndices[randomIndex];
+			// 	testIndices[randomIndex] = temp;
+			// }
 
 			++epoch;
 		}
-	}
-
-
-	public static void testNet1() {
-		NeuralNet nn = new NeuralNet();
-
-		nn.layers.add(new LayerLinear(784, 80));
-		nn.layers.add(new LayerTanh(80));
-
-		nn.layers.add(new LayerLinear(80, 30));
-		nn.layers.add(new LayerTanh(30));
-
-		nn.layers.add(new LayerLinear(30, 10));
-		nn.layers.add(new LayerTanh(10));
-
-		nn.layers.add(new LayerLinear(10, 10));
-
-		//nn.initWeights();
-
-		double[] x = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,185,159,151,60,36,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,222,254,254,254,254,241,198,198,198,198,198,198,198,198,170,52,0,0,0,0,0,0,0,0,0,0,0,0,67,114,72,114,163,227,254,225,254,254,254,250,229,254,254,140,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,17,66,14,67,67,67,59,21,236,254,106,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,253,209,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22,233,255,83,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,129,254,238,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,59,249,254,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,133,254,187,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,205,248,58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,126,254,182,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,75,251,240,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,221,254,166,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,203,254,219,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,38,254,254,77,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,224,254,115,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,133,254,254,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,61,242,254,254,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,254,254,219,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,254,207,18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-		Vec in = new Vec(x);
-		in.scale(1.0/256.0);
-
-		//double[] t = {7};
-		double[] t = {0,0,0,0,0,0,0,1,0,0};
-		Vec target = new Vec(t);
-		for(int i = 0; i < 100; ++i) {
-			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-			System.out.println("EPOCH: " + i);
-			Vec o = nn.predict(in);
-			nn.refineWeights(in, target, null, 0.1);
-			System.out.println(o);
-		}
-
 	}
 
 	public static void testBackProp() {
@@ -322,11 +293,11 @@ class Main
 
 	public static void main(String[] args)
 	{
-		testData();
+		//testData();
 		//testSomething();
 		//testChunks();
 		//run(new NeuralNet());
-		//opticalCharacterRecognition();
+		opticalCharacterRecognition();
 		//testNet();
 		//testNet1();
 		//testBackProp();

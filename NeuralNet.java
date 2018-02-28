@@ -35,8 +35,6 @@ public class NeuralNet extends SupervisedLearner {
         }
       }
     }
-
-    System.out.println(weights);
   }
 
   // TODO: backprop strips the wrong set of weights
